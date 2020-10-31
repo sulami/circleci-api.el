@@ -1,0 +1,38 @@
+#+TITLE: CircleCI API
+
+[[https://melpa.org/#/circleci-api][file:https://melpa.org/packages/circleci-api-badge.svg]]
+[[https://app.circleci.com/pipelines/github/sulami/circleci-api][file:https://circleci.com/gh/sulami/circleci-api.svg?style=svg]]
+
+Bindings for the CircleCI API.
+
+* Installing
+
+Simply grab it from [[https://melpa.org/][MELPA]].
+
+** [[https://github.com/jwiegley/use-package][use-package]]
+
+#+begin_src emacs-lisp
+(use-package circleci-api
+  :ensure t)
+#+end_src
+
+** [[https://github.com/raxod502/straight.el][straight.el]]
+
+#+begin_src emacs-lisp
+(straight-use-package 'circleci-api)
+#+end_src
+
+** package.el
+
+[[https://melpa.org/#/getting-started][Ensure you have MELPA available.]]
+
+=M-x package-install RET circleci-api RET=.
+
+** Manual
+
+Just fetch [[file:circleci-api.el][circleci-api.el]], save it somewhere and load it into
+Emacs.
+
+* Use
+
+Just =M-x circleci RET=.
