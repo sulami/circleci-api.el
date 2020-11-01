@@ -50,23 +50,34 @@
   (concat vcs "/" owner "/" repo))
 
 (defun circleci--make-project-route (project-triplet)
+  "Return the API route for the project at PROJECT-TRIPLET."
   (concat circleci--route--project "/" project-triplet))
 
 (defun circleci--make-project-pipelines-route (project-triplet)
+  "Return the API route for pipelines of the project at PROJECT-TRIPLET."
   (concat (circleci--make-project-route project-triplet)
           "/pipeline"))
 
 (defun circleci--make-pipeline-route (pipeline-id)
+  "Return the API route for the pipeline with PIPELINE-ID."
   (concat circleci--route--pipeline "/" pipeline-id))
 
 (defun circleci--make-pipeline-config-route (pipeline-id)
+  "Return the API route for the config of the pipeline with PIPELINE-ID."
   (concat (circleci--make-pipeline-route pipeline-id)
           "/config"))
 
 ;; Plumbing:
 
 (cl-defun circleci--default-handler (&key symbol-status circleci-responses &allow-other-keys)
-  "Default RESPONSE handler for CircleCI requests."
+  "Default RESPONSE handler for CircleCI requests.
+
+Currently just prints some info.
+
+SYMBOL-STATUS is provided by request.
+
+CIRCLECI-RESPONSES is filled with a list of responses if the request
+was paginated."
   (message "CircleCI request done: %s" symbol-status)
   (when circleci-responses
     (message "Ran %s requests" (length circleci-responses))))
