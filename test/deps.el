@@ -35,6 +35,6 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
-;;; TODO Place dependencies here.
+(straight-use-package 'request)
 
 ;;; deps.el ends here

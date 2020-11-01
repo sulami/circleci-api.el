@@ -38,9 +38,13 @@
   "The CircleCI API token."
   :type 'string)
 
+(defcustom circleci-api-host "https://circleci.com"
+  "The CircleCI API host."
+  :type 'string)
+
 ;; Routes:
 
-(defconst circleci--route--api-root "https://circleci.com/api")
+(defconst circleci--route--api-root (concat circleci-api-host "/api"))
 (defconst circleci--route--api-v2 (concat circleci--route--api-root "/v2"))
 (defconst circleci--route--pipeline (concat circleci--route--api-v2 "/pipeline"))
 (defconst circleci--route--project (concat circleci--route--api-v2 "/project"))
@@ -101,6 +105,7 @@ PAGE-TOKEN is the optional pagination token for list endpoints.
 HANDLER is the handler function to run on success, defaulting to
 `circleci--default-handler'."
   (request
+    ;; FIXME use :params
     (if page-token
         (concat route "?page-token=" page-token)
       route)

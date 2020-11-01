@@ -15,13 +15,54 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+;;; Commentary:
+
+;; Tests for circleci-api.
+
 ;;; Code:
 
+(require 'cl-macs)
 (require 'ert)
 (require 'circleci-api)
 
 (ert-deftest circleci-api-test/sanity-test ()
   (should (equal 1 1)))
+
+(cl-defmacro circleci-api-test/with-test-host (&body body)
+  "Run BODY against the local test API.
+
+Attempts to bring up the test server using nix-shell, run the test
+with the appropriate bindings, and kill the server."
+  `(let ((host-process (start-process "circleci-test-server"
+                                       "*circleci-test-server*"
+                                       (executable-find "nix-shell")
+                                       "-p"
+                                       "pythonPackages.flask"
+                                       "--command"
+                                       (concat "python3 " (expand-file-name "test_server.py"))))
+         (circleci-api-host "http://localhost:5000"))
+     (cl-loop with buffer = (process-buffer host-process)
+              repeat 30
+              do (accept-process-output host-process 0.1 nil t)
+              for str = (with-current-buffer buffer (buffer-string))
+              do (cond
+                  ((string-match "Running on" str)
+                   (cl-return str))
+                  ((not (eq 'run (process-status host-process)))
+                   (error "Test server startup failure")))
+              finally do (error "Test server startup failure"))
+     ,@body
+     (kill-process host-process)))
+
+(ert-deftest circleci-api-test/test-test-host ()
+  (circleci-api-test/with-test-host
+   (request
+     "http://localhost:5000"
+     :sync t
+     :parser #'buffer-string
+     :complete (cl-function
+                (lambda (&key data &allow-other-keys)
+                  (should (equal "Hey" data)))))))
 
 (provide 'circleci-api-test)
 
