@@ -138,6 +138,7 @@ passed through here to count and aggregate responses."
                                  :circleci-pages (- circleci-pages 1)
                                  :circleci-responses (cons response circleci-responses)
                                  args))
+               :allow-other-keys t
                circleci-args)
       ;; Reached the end, apply original handler.
       ;; TODO merge previous responses?.
@@ -149,8 +150,6 @@ passed through here to count and aggregate responses."
              :circleci-responses (cons response circleci-responses)
              '()))))
 
-;; FIXME Currently the keyword arguments for this function cannot be
-;; set, they're captured in args.
 (cl-defun circleci-run-paginated-request (route &rest args
                                                 &key
                                                 (handler #'circleci--default-handler)
@@ -173,6 +172,7 @@ TBD."
                            :circleci-pages pages
                            :circleci-handler handler
                            handler-args))
+         :allow-other-keys t
          args))
 
 (provide 'circleci-api)
