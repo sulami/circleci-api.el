@@ -44,31 +44,31 @@
 
 ;; Routes:
 
-(defconst circleci--route--api-root (concat circleci-api-host "/api"))
-(defconst circleci--route--api-v2 (concat circleci--route--api-root "/v2"))
-(defconst circleci--route--pipeline (concat circleci--route--api-v2 "/pipeline"))
-(defconst circleci--route--project (concat circleci--route--api-v2 "/project"))
+(defun circleci--route--api-root () (concat circleci-api-host "/api"))
+(defun circleci--route--api-v2 () (concat (circleci--route--api-root) "/v2"))
+(defun circleci--route--pipeline () (concat (circleci--route--api-v2) "/pipeline"))
+(defun circleci--route--project () (concat (circleci--route--api-v2) "/project"))
 
 (defun circleci--project-triplet (vcs owner repo)
   "Make the project triplet VCS/OWNER/REPO."
   (concat vcs "/" owner "/" repo))
 
-(defun circleci--make-project-route (project-triplet)
+(defun circleci--route--project-route (project-triplet)
   "Return the API route for the project at PROJECT-TRIPLET."
-  (concat circleci--route--project "/" project-triplet))
+  (concat (circleci--route--project) "/" project-triplet))
 
-(defun circleci--make-project-pipelines-route (project-triplet)
+(defun circleci--route--project-pipelines (project-triplet)
   "Return the API route for pipelines of the project at PROJECT-TRIPLET."
-  (concat (circleci--make-project-route project-triplet)
+  (concat (circleci--route--project project-triplet)
           "/pipeline"))
 
-(defun circleci--make-pipeline-route (pipeline-id)
+(defun circleci--route--pipeline-by-id (pipeline-id)
   "Return the API route for the pipeline with PIPELINE-ID."
-  (concat circleci--route--pipeline "/" pipeline-id))
+  (concat (circleci--route--pipeline) "/" pipeline-id))
 
-(defun circleci--make-pipeline-config-route (pipeline-id)
+(defun circleci--route--pipeline-config (pipeline-id)
   "Return the API route for the config of the pipeline with PIPELINE-ID."
-  (concat (circleci--make-pipeline-route pipeline-id)
+  (concat (circleci--route--pipeline pipeline-id)
           "/config"))
 
 ;; Plumbing:
