@@ -69,6 +69,14 @@ with the appropriate bindings, and kill the server."
                 (lambda (&key data &allow-other-keys)
                   (should (equal "Hey" data)))))))
 
+(ert-deftest circleci-api-test/test-pipeline-list ()
+  (circleci-api-test/with-test-host
+   (circleci-get-pipelines
+    :sync t
+    :handler (cl-function
+              (lambda (&key response data &allow-other-keys)
+                (should (equal '((id . "fooo")) data)))))))
+
 (provide 'circleci-api-test)
 
 ;;; circleci-api-test.el ends here

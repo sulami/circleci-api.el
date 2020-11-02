@@ -191,6 +191,15 @@ TBD."
          :allow-other-keys t
          args))
 
+;; External interface:
+
+(cl-defun circleci-get-pipelines (&rest args &allow-other-keys)
+  "Get recent pipelines for the user."
+  (apply
+   #'circleci-run-request
+   (circleci--route--pipeline)
+   args))
+
 (provide 'circleci-api)
 
 ;;; circleci-api.el ends here
