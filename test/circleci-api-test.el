@@ -33,7 +33,8 @@
 
 Attempts to bring up the test server using nix-shell, run the test
 with the appropriate bindings, and kill the server."
-  `(let ((_ (with-current-buffer "*circleci-test-server*" (erase-buffer)))
+  `(let ((_ (get-buffer-create "*circleci-test-server*"))
+         (_ (with-current-buffer "*circleci-test-server*" (erase-buffer)))
          (host-process (start-process "circleci-test-server"
                                        "*circleci-test-server*"
                                        (executable-find "nix-shell")
@@ -53,14 +54,14 @@ with the appropriate bindings, and kill the server."
                          (cl-return str))
                         ((not (eq 'run (process-status host-process)))
                          (error "Test server startup failure")))
-                    finally do (error "Test server startup failure"))
+                    finally do (error "Test server startup crash"))
            ,@body)
        (kill-process host-process))))
 
 (ert-deftest circleci-api-test/test-test-host ()
   (circleci-api-test/with-test-host
    (request
-     "http://localhost:5000"
+     circleci-api-host
      :sync t
      :parser #'buffer-string
      :complete (cl-function
