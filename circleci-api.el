@@ -90,7 +90,8 @@ was paginated."
                                       (method "GET")
                                       (token circleci-api-token)
                                       (page-token nil)
-                                      (handler #'circleci--default-handler))
+                                      (handler #'circleci--default-handler)
+                                      (sync nil))
   "Run the request at ROUTE with authN.
 
 Returns data parsed from JSON.
@@ -105,14 +106,13 @@ PAGE-TOKEN is the optional pagination token for list endpoints.
 HANDLER is the handler function to run on success, defaulting to
 `circleci--default-handler'."
   (request
-    ;; FIXME use :params
-    (if page-token
-        (concat route "?page-token=" page-token)
-      route)
+    route
+    :params (when page-token (list (cons "page-token" page-token)))
     :type method
     :headers (list (cons "Circle-Token" token))
     :parser 'json-read
-    :complete handler))
+    :complete handler
+    :sync sync))
 
 (cl-defun circleci--pagination-handler (&key
                                         data
