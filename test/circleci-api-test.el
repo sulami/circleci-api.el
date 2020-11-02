@@ -42,7 +42,8 @@ with the appropriate bindings, and kill the server."
                                        "pythonPackages.flask"
                                        "--command"
                                        (concat "python3 " (expand-file-name "test_server.py"))))
-         (circleci-api-host "http://localhost:5000"))
+         (circleci-api-host "http://localhost:5000")
+         (circleci-api-token "test-token"))
      (unwind-protect
          (progn
            (cl-loop with buffer = (process-buffer host-process)
