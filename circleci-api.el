@@ -68,7 +68,7 @@
 
 (defun circleci--route--pipeline-config (pipeline-id)
   "Return the API route for the config of the pipeline with PIPELINE-ID."
-  (concat (circleci--route--pipeline pipeline-id)
+  (concat (circleci--route--pipeline-by-id pipeline-id)
           "/config"))
 
 ;; Plumbing:
@@ -229,6 +229,13 @@ Supply PAGES as a keyword argument to fetch several pages. See
   (apply
    #'circleci-run-request
    (circleci--route--pipeline-by-id pipeline-id)
+   args))
+
+(cl-defun circleci-get-pipeline-config (pipeline-id &rest args &allow-other-keys)
+  "Get config for the pipeline with PIPELINE-ID."
+  (apply
+   #'circleci-run-request
+   (circleci--route--pipeline-config pipeline-id)
    args))
 
 (provide 'circleci-api)

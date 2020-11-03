@@ -30,4 +30,10 @@ def project(vcs, owner, repo):
 def pipeline_by_id(pipeline_id):
     return jsonify(id=pipeline_id)
 
+@app.route('/api/v2/pipeline/<pipeline_id>/config')
+def pipeline_config(pipeline_id):
+    return jsonify(source='source',
+                   compiled='compiled')
+
+
 app.run()

@@ -58,7 +58,7 @@ apropos RET circleci RET= can help with discovery.
 
 - [X] Project
 - [X] Pipeline by ID
-- [ ] Pipeline config
+- [X] Pipeline config
 - [ ] Pipeline workflows
 - [X] Pipelines by org
 - [ ] Pipelines by project

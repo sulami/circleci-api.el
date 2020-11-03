@@ -145,6 +145,16 @@ with the appropriate bindings, and kill the server."
                 (should (equal '((id . "123"))
                                data)))))))
 
+(ert-deftest circleci-api-test/test-pipeline-config ()
+  (circleci-api-test/with-test-host
+   (circleci-get-pipeline-config
+    "123"
+    :sync t
+    :handler (cl-function
+              (lambda (&key response data &allow-other-keys)
+                (should (equal '((compiled . "compiled")
+                                 (source . "source"))
+                               data)))))))
 
 (provide 'circleci-api-test)
 
