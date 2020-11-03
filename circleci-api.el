@@ -50,7 +50,7 @@
 
 (defun circleci--route--project (project-triplet)
   "Return the API route for the project at PROJECT-TRIPLET."
-  (concat (circleci--route--route) "/project/" project-triplet))
+  (concat (circleci--route--api-v2) "/project/" project-triplet))
 
 (defun circleci--route--project-pipelines (project-triplet)
   "Return the API route for pipelines of the project at PROJECT-TRIPLET."
@@ -197,6 +197,13 @@ TBD."
   (apply
    #'circleci-run-request
    (circleci--route--pipeline)
+   args))
+
+(cl-defun circleci-get-project (project-triplet &rest args &allow-other-keys)
+  "Get a project."
+  (apply
+   #'circleci-run-request
+   (circleci--route--project project-triplet)
    args))
 
 (provide 'circleci-api)

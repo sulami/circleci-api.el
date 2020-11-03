@@ -11,4 +11,8 @@ def root():
 def pipelines():
     return jsonify(id='fooo')
 
+@app.route('/api/v2/project/<vcs>/<owner>/<repo>')
+def project(vcs, owner, repo):
+    return jsonify(project_slug='/'.join([vcs, owner, repo]))
+
 app.run()

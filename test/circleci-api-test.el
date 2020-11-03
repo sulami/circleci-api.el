@@ -78,8 +78,18 @@ with the appropriate bindings, and kill the server."
    (circleci-get-pipelines
     :sync t
     :handler (cl-function
-              (lambda (&key response data &allow-other-keys)
+              (lambda (&key data &allow-other-keys)
                 (should (equal '((id . "fooo")) data)))))))
+
+(ert-deftest circleci-api-test/test-project ()
+  (circleci-api-test/with-test-host
+   (circleci-get-project
+    (circleci-project-triplet "gh" "sulami" "circleci-api")
+    :sync t
+    :handler (cl-function
+              (lambda (&key response data &allow-other-keys)
+                (should (equal '((project_slug . "gh/sulami/circleci-api"))
+                               data)))))))
 
 (provide 'circleci-api-test)
 
