@@ -12,6 +12,10 @@ def pipelines():
     org_slug = request.args.get('org-slug', None)
     if org_slug is None:
         return jsonify(message='You must provide an org-slug.')
+    mine = request.args.get('mine', None)
+    if mine:
+        return jsonify(next_page_token=None,
+                       items=[{'id': 'quux'}])
     page_token = request.args.get('page-token', None)
     if page_token == 'abc':
         return jsonify(next_page_token=None,

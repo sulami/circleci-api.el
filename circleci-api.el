@@ -222,8 +222,13 @@ TBD."
   "Construct the project slug VCS/OWNER/REPO."
   (concat vcs "/" owner "/" repo))
 
-(cl-defun circleci-get-pipelines (org-slug &rest args &allow-other-keys)
+(cl-defun circleci-get-pipelines (org-slug &rest args
+                                           &key
+                                           (mine nil)
+                                           &allow-other-keys)
   "Get recent pipelines for the org with ORG-SLUG.
+
+If MINE is non-nil, only returns pipelines for the authenticated user.
 
 ARGS is passed to `circleci-run-request'.
 
@@ -232,7 +237,10 @@ Supply PAGES as a keyword argument to fetch several pages. See
   (apply
    #'circleci-run-paginated-request
    (circleci--route--pipeline)
-   :params (list (cons "org-slug" org-slug))
+   :params (cl-concatenate
+            'list
+            (list (cons "org-slug" org-slug))
+            (when mine (list (cons "mine" mine))))
    args))
 
 (cl-defun circleci-get-project (project-slug &rest args &allow-other-keys)

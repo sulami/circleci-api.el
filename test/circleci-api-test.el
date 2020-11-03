@@ -125,6 +125,22 @@ with the appropriate bindings, and kill the server."
                                     (anth 0)
                                     (alist-get 'id)))))))))
 
+(ert-deftest circleci-api-test/test-my-pipelines ()
+  (circleci-api-test/with-test-host
+   (circleci-get-pipelines
+    (circleci-org-slug "gh" "sulami")
+    :sync t
+    :mine t
+    :handler (cl-function
+              (lambda (&key error-thrown data circleci-responses &allow-other-keys)
+                (should (not error-thrown))
+                (should (eq 1 (length circleci-responses)))
+                (should (equal "quux"
+                               (->> data
+                                    (alist-get 'items)
+                                    (anth 0)
+                                    (alist-get 'id)))))))))
+
 (ert-deftest circleci-api-test/test-project ()
   (circleci-api-test/with-test-host
    (circleci-get-project
