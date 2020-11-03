@@ -61,6 +61,12 @@
   "Return the API route for pipelines."
   (concat (circleci--route--api-v2) "/pipeline"))
 
+(defun circleci--route--workflow-by-id (workflow-id)
+  "Return the API route for the workflows with WORKFLOW-ID."
+  (concat (circleci--route--api-v2)
+          "/workflow/"
+          workflow-id))
+
 (defun circleci--route--project (project-slug)
   "Return the API route for the project at PROJECT-SLUG."
   (concat (circleci--route--api-v2) "/project/" project-slug))
@@ -309,6 +315,15 @@ Supply PAGES as a keyword argument to fetch several pages. See
   (apply
    #'circleci-run-paginated-request
    (circleci--route--my-project-pipelines project-slug)
+   args))
+
+(cl-defun circleci-get-workflow (workflow-id &rest args &allow-other-keys)
+  "Get the workflow with WORKFLOW-ID.
+
+ARGS is passed to `circleci-run-request'."
+  (apply
+   #'circleci-run-request
+   (circleci--route--workflow-by-id workflow-id)
    args))
 
 (provide 'circleci-api)

@@ -71,4 +71,8 @@ def my_project_pipelines(vcs, owner, repo):
     return jsonify(next_page_token='abc',
                    items=[{'id': 'quux'}])
 
+@app.route('/api/v2/workflow/<workflow_id>')
+def workflow(workflow_id):
+    return jsonify(id=workflow_id)
+
 app.run()
