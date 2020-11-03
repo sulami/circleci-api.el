@@ -35,7 +35,9 @@
 ;; Customisation:
 
 (defgroup circleci nil
-  "Bindings for the CircleCI API.")
+  "Bindings for the CircleCI API."
+  :group 'comm
+  :prefix "circleci-")
 
 (defcustom circleci-api-token ""
   "The CircleCI API token."
