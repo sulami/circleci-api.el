@@ -49,9 +49,17 @@
 
 ;; Routes:
 
-(defun circleci--route--api-root () (concat circleci-api-host "/api"))
-(defun circleci--route--api-v2 () (concat (circleci--route--api-root) "/v2"))
-(defun circleci--route--pipeline () (concat (circleci--route--api-v2) "/pipeline"))
+(defun circleci--route--api-root ()
+  "Return the API root."
+  (concat circleci-api-host "/api"))
+
+(defun circleci--route--api-v2 ()
+  "Return the APIv2 root."
+  (concat (circleci--route--api-root) "/v2"))
+
+(defun circleci--route--pipeline ()
+  "Return the API route for pipelines."
+  (concat (circleci--route--api-v2) "/pipeline"))
 
 (defun circleci--route--project (project-slug)
   "Return the API route for the project at PROJECT-SLUG."
@@ -109,8 +117,12 @@ TOKEN is the CircleCI API token, defaulting to the value of
 
 PAGE-TOKEN is the optional pagination token for list endpoints.
 
+PARAMS is appended to the HTTP query parameters.
+
 HANDLER is the handler function to run on success, defaulting to
-`circleci--default-handler'."
+`circleci--default-handler'.
+
+If SYNC is non-nil, this request is run synchronously."
   (request
     route
     :params (cl-concatenate
@@ -128,7 +140,6 @@ HANDLER is the handler function to run on success, defaulting to
                                         error-thrown
                                         symbol-status
                                         response
-                                        params
                                         circleci-route
                                         circleci-args
                                         circleci-handler
@@ -214,6 +225,8 @@ TBD."
 (cl-defun circleci-get-pipelines (org-slug &rest args &allow-other-keys)
   "Get recent pipelines for the org with ORG-SLUG.
 
+ARGS is passed to `circleci-run-request'.
+
 Supply PAGES as a keyword argument to fetch several pages. See
 `circleci-run-paginated-request' for more info."
   (apply
@@ -223,21 +236,27 @@ Supply PAGES as a keyword argument to fetch several pages. See
    args))
 
 (cl-defun circleci-get-project (project-slug &rest args &allow-other-keys)
-  "Get a project."
+  "Get the project with PROJECT-SLUG.
+
+ARGS is passed to `circleci-run-request'."
   (apply
    #'circleci-run-request
    (circleci--route--project project-slug)
    args))
 
 (cl-defun circleci-get-pipeline (pipeline-id &rest args &allow-other-keys)
-  "Get a pipeline by PIPELINE-ID."
+  "Get a pipeline by PIPELINE-ID.
+
+ARGS is passed to `circleci-run-request'."
   (apply
    #'circleci-run-request
    (circleci--route--pipeline-by-id pipeline-id)
    args))
 
 (cl-defun circleci-get-pipeline-config (pipeline-id &rest args &allow-other-keys)
-  "Get the config for the pipeline with PIPELINE-ID."
+  "Get the config for the pipeline with PIPELINE-ID.
+
+ARGS is passed to `circleci-run-request'."
   (apply
    #'circleci-run-request
    (circleci--route--pipeline-config pipeline-id)
@@ -245,6 +264,8 @@ Supply PAGES as a keyword argument to fetch several pages. See
 
 (cl-defun circleci-get-pipeline-workflows (pipeline-id &rest args &allow-other-keys)
   "Get the workflows for the pipeline with PIPELINE-ID.
+
+ARGS is passed to `circleci-run-paginated-request'.
 
 Supply PAGES as a keyword argument to fetch several pages. See
 `circleci-run-paginated-request' for more info."
