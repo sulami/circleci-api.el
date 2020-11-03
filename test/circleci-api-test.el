@@ -135,6 +135,17 @@ with the appropriate bindings, and kill the server."
                 (should (equal '((project_slug . "gh/sulami/circleci-api"))
                                data)))))))
 
+(ert-deftest circleci-api-test/test-pipeline-by-id ()
+  (circleci-api-test/with-test-host
+   (circleci-get-pipeline
+    "123"
+    :sync t
+    :handler (cl-function
+              (lambda (&key response data &allow-other-keys)
+                (should (equal '((id . "123"))
+                               data)))))))
+
+
 (provide 'circleci-api-test)
 
 ;;; circleci-api-test.el ends here

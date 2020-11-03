@@ -57,7 +57,7 @@ apropos RET circleci RET= can help with discovery.
 * Coverage
 
 - [X] Project
-- [ ] Pipeline by ID
+- [X] Pipeline by ID
 - [ ] Pipeline config
 - [ ] Pipeline workflows
 - [X] Pipelines by org

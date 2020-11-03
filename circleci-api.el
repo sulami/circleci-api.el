@@ -224,6 +224,13 @@ Supply PAGES as a keyword argument to fetch several pages. See
    (circleci--route--project project-slug)
    args))
 
+(cl-defun circleci-get-pipeline (pipeline-id &rest args &allow-other-keys)
+  "Get a pipeline by PIPELINE-ID."
+  (apply
+   #'circleci-run-request
+   (circleci--route--pipeline-by-id pipeline-id)
+   args))
+
 (provide 'circleci-api)
 
 ;;; circleci-api.el ends here

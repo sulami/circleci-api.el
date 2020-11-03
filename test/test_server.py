@@ -26,4 +26,8 @@ def pipelines():
 def project(vcs, owner, repo):
     return jsonify(project_slug='/'.join([vcs, owner, repo]))
 
+@app.route('/api/v2/pipeline/<pipeline_id>')
+def pipeline_by_id(pipeline_id):
+    return jsonify(id=pipeline_id)
+
 app.run()
