@@ -32,15 +32,20 @@
 (require 'cl-macs)
 (require 'request)
 
-;; Options:
+;; Customisation:
+
+(defgroup circleci nil
+  "Bindings for the CircleCI API.")
 
 (defcustom circleci-api-token ""
   "The CircleCI API token."
-  :type 'string)
+  :type 'string
+  :group 'circleci)
 
 (defcustom circleci-api-host "https://circleci.com"
   "The CircleCI API host."
-  :type 'string)
+  :type 'string
+  :group 'circleci)
 
 ;; Routes:
 
