@@ -274,6 +274,18 @@ Supply PAGES as a keyword argument to fetch several pages. See
    (circleci--route--pipeline-workflows pipeline-id)
    args))
 
+(cl-defun circleci-get-project-pipelines (project-slug &rest args &allow-other-keys)
+  "Get the pipelines for the project with PROJECT-SLUG.
+
+ARGS is passed to `circleci-run-paginated-request'.
+
+Supply PAGES as a keyword argument to fetch several pages. See
+`circleci-run-paginated-request' for more info."
+  (apply
+   #'circleci-run-paginated-request
+   (circleci--route--project-pipelines project-slug)
+   args))
+
 (provide 'circleci-api)
 
 ;;; circleci-api.el ends here
