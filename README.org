@@ -5,6 +5,14 @@
 
 Bindings for the CircleCI API.
 
+* Features
+
+- Automatic authentication via API token
+- Automatic pagination of list endpoints (fetch up to N pages in one call)
+- Asynchronous by default
+- Transparent JSON deserialisation
+- Backed by the excellent [[https://github.com/tkf/emacs-request][request]] library
+
 * Installing
 
 Simply grab it from [[https://melpa.org/][MELPA]].
@@ -33,6 +41,33 @@ Simply grab it from [[https://melpa.org/][MELPA]].
 Just fetch [[file:circleci-api.el][circleci-api.el]], save it somewhere and load it into
 Emacs.
 
+* Configuration
+
+=M-x customize-group RET circleci RET=, or manually by setting the
+following variables:
+
+- ~circleci-api-token~ :: The CircleCI API token (default: not set)
+- ~circleci-api-host~ :: The CircleCI API host (default: ~https://circleci.com~)
+
 * Use
 
-Just =M-x circleci RET=.
+This package exports a long list of functions named ~circleci-*~. =M-x
+apropos RET circleci RET= can help with discovery.
+
+* Coverage
+
+- [X] Project
+- [ ] Pipeline by ID
+- [ ] Pipeline config
+- [ ] Pipeline workflows
+- [X] Pipelines by org
+- [ ] Pipelines by project
+- [ ] Pipelines by user
+- [ ] Trigger pipeline
+- [ ] Workflow by ID
+- [ ] Workflow jobs
+- [ ] Cancel workflow
+- [ ] Rerun workflow
+- [ ] Approve a job
+
+Anything not included in the list above is not implemented yet.
