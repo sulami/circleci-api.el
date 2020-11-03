@@ -71,6 +71,11 @@
   (concat (circleci--route--pipeline-by-id pipeline-id)
           "/config"))
 
+(defun circleci--route--pipeline-workflows (pipeline-id)
+  "Return the API route for the workflows of the pipeline with PIPELINE-ID."
+  (concat (circleci--route--pipeline-by-id pipeline-id)
+          "/workflow"))
+
 ;; Plumbing:
 
 (cl-defun circleci--default-handler (&key symbol-status circleci-responses &allow-other-keys)
@@ -239,7 +244,10 @@ Supply PAGES as a keyword argument to fetch several pages. See
    args))
 
 (cl-defun circleci-get-pipeline-workflows (pipeline-id &rest args &allow-other-keys)
-  "Get the workflows for the pipeline with PIPELINE-ID."
+  "Get the workflows for the pipeline with PIPELINE-ID.
+
+Supply PAGES as a keyword argument to fetch several pages. See
+`circleci-run-paginated-request' for more info."
   (apply
    #'circleci-run-paginated-request
    (circleci--route--pipeline-workflows pipeline-id)

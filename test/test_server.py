@@ -34,5 +34,15 @@ def pipeline_config(pipeline_id):
     return jsonify(source='source',
                    compiled='compiled')
 
+@app.route('/api/v2/pipeline/<pipeline_id>/workflow')
+def pipeline_workflows(pipeline_id):
+    page_token = request.args.get('page-token', None)
+    if page_token == 'abc':
+        return jsonify(next_page_token=None,
+                       items=[{'id': 'baar'}])
+    if page_token:
+        return jsonify(message='Invalid pagination token'), 400
+    return jsonify(next_page_token='abc',
+                   items=[{'id': 'fooo'}])
 
 app.run()

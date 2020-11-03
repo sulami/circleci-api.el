@@ -131,7 +131,7 @@ with the appropriate bindings, and kill the server."
     (circleci-project-slug "gh" "sulami" "circleci-api")
     :sync t
     :handler (cl-function
-              (lambda (&key response data &allow-other-keys)
+              (lambda (&key data &allow-other-keys)
                 (should (equal "gh/sulami/circleci-api"
                                (alist-get 'project_slug data))))))))
 
@@ -141,7 +141,7 @@ with the appropriate bindings, and kill the server."
     "123"
     :sync t
     :handler (cl-function
-              (lambda (&key response data &allow-other-keys)
+              (lambda (&key data &allow-other-keys)
                 (should (equal "123"
                                (alist-get 'id data))))))))
 
@@ -151,11 +151,24 @@ with the appropriate bindings, and kill the server."
     "123"
     :sync t
     :handler (cl-function
-              (lambda (&key response data &allow-other-keys)
+              (lambda (&key data &allow-other-keys)
                 (should (equal "source"
                                (alist-get 'source data)))
                 (should (equal "compiled"
                                (alist-get 'compiled data))))))))
+
+(ert-deftest circleci-api-test/test-pipeline-workflows ()
+  (circleci-api-test/with-test-host
+   (circleci-get-pipeline-workflows
+    "123"
+    :sync t
+    :handler (cl-function
+              (lambda (&key data &allow-other-keys)
+                (should (equal "fooo"
+                               (->> data
+                                    (alist-get 'items)
+                                    (anth 0)
+                                    (alist-get 'id)))))))))
 
 (provide 'circleci-api-test)
 
