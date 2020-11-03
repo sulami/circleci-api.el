@@ -67,6 +67,11 @@
           "/workflow/"
           workflow-id))
 
+(defun circleci--route--workflow-jobs (workflow-id)
+  "Return the API route for the jobs of the workflow with WORKFLOW-ID."
+  (concat (circleci--route--workflow-by-id workflow-id)
+          "/job"))
+
 (defun circleci--route--project (project-slug)
   "Return the API route for the project at PROJECT-SLUG."
   (concat (circleci--route--api-v2) "/project/" project-slug))
@@ -324,6 +329,18 @@ ARGS is passed to `circleci-run-request'."
   (apply
    #'circleci-run-request
    (circleci--route--workflow-by-id workflow-id)
+   args))
+
+(cl-defun circleci-get-workflow-jobs (workflow-id &rest args &allow-other-keys)
+  "Get the jobs for the workflow with WORKFLOW-ID.
+
+ARGS is passed to `circleci-run-paginated-request'.
+
+Supply PAGES as a keyword argument to fetch several pages. See
+`circleci-run-paginated-request' for more info."
+  (apply
+   #'circleci-run-paginated-request
+   (circleci--route--workflow-jobs workflow-id)
    args))
 
 (provide 'circleci-api)

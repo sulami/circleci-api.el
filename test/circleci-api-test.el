@@ -222,6 +222,19 @@ with the appropriate bindings, and kill the server."
                 (should (equal "wonf"
                                (alist-get 'id data))))))))
 
+(ert-deftest circleci-api-test/test-workflow-jobs ()
+  (circleci-api-test/with-test-host
+   (circleci-get-workflow-jobs
+    "wonf"
+    :sync t
+    :handler (cl-function
+              (lambda (&key data &allow-other-keys)
+                (should (equal 1
+                               (->> data
+                                    (alist-get 'items)
+                                    (anth 0)
+                                    (alist-get 'number)))))))))
+
 (provide 'circleci-api-test)
 
 ;;; circleci-api-test.el ends here

@@ -75,4 +75,15 @@ def my_project_pipelines(vcs, owner, repo):
 def workflow(workflow_id):
     return jsonify(id=workflow_id)
 
+@app.route('/api/v2/workflow/<workflow_id>/job')
+def workflow_jobs(workflow_id):
+    page_token = request.args.get('page-token', None)
+    if page_token == 'abc':
+        return jsonify(next_page_token=None,
+                       items=[{'number': 2}])
+    if page_token:
+        return jsonify(message='Invalid pagination token'), 400
+    return jsonify(next_page_token='abc',
+                   items=[{'number': 1}])
+
 app.run()
