@@ -22,8 +22,13 @@
 ;;; Code:
 
 (require 'cl-macs)
+(require 'dash)
 (require 'ert)
 (require 'circleci-api)
+
+(defun anth (idx array)
+  "Reversed version of `aref' for threading."
+  (aref array idx))
 
 (ert-deftest circleci-api-test/sanity-test ()
   (should (equal 1 1)))
@@ -78,8 +83,26 @@ with the appropriate bindings, and kill the server."
    (circleci-get-pipelines
     :sync t
     :handler (cl-function
+              (lambda (&key data circleci-responses &allow-other-keys)
+                (should (eq 2 (length circleci-responses)))
+                (should (equal "fooo"
+                               (->> data
+                                    (alist-get 'pipelines)
+                                    (anth 0)
+                                    (alist-get 'id)))))))))
+
+(ert-deftest circleci-api-test/test-paginated-pipeline-list ()
+  (circleci-api-test/with-test-host
+   (circleci-get-pipelines
+    :sync t
+    :pages 2
+    :handler (cl-function
               (lambda (&key data &allow-other-keys)
-                (should (equal '((id . "fooo")) data)))))))
+                (should (equal "baar"
+                               (->> data
+                                    (alist-get 'pipelines)
+                                    (anth 0)
+                                    (alist-get 'id)))))))))
 
 (ert-deftest circleci-api-test/test-project ()
   (circleci-api-test/with-test-host

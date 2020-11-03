@@ -164,7 +164,7 @@ passed through here to count and aggregate responses."
 (cl-defun circleci-run-paginated-request (route &rest args
                                                 &key
                                                 (handler #'circleci--default-handler)
-                                                (pages 5)
+                                                (pages 1)
                                                 &allow-other-keys)
   "Run a request on ROUTE and keep paginating for PAGES pages.
 
@@ -193,9 +193,12 @@ TBD."
   (concat vcs "/" owner "/" repo))
 
 (cl-defun circleci-get-pipelines (&rest args &allow-other-keys)
-  "Get recent pipelines for the user."
+  "Get recent pipelines for the user.
+
+Supply PAGES as a keyword argument to fetch several pages. See
+`circleci-run-paginated-request' for more info."
   (apply
-   #'circleci-run-request
+   #'circleci-run-paginated-request
    (circleci--route--pipeline)
    args))
 
