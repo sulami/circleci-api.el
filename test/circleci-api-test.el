@@ -33,9 +33,9 @@
 (ert-deftest circleci-api-test/sanity-test ()
   (should (equal 1 1)))
 
-(ert-deftest circleci-api-test/test-project-triplet ()
+(ert-deftest circleci-api-test/test-project-slug ()
   (should (equal "gh/sulami/circleci-api"
-                 (circleci-project-triplet "gh" "sulami" "circleci-api"))))
+                 (circleci-project-slug "gh" "sulami" "circleci-api"))))
 
 (cl-defmacro circleci-api-test/with-test-host (&body body)
   "Run BODY against the local test API.
@@ -81,10 +81,12 @@ with the appropriate bindings, and kill the server."
 (ert-deftest circleci-api-test/test-pipeline-list ()
   (circleci-api-test/with-test-host
    (circleci-get-pipelines
+    (circleci-org-slug "gh" "sulami")
     :sync t
     :handler (cl-function
-              (lambda (&key data circleci-responses &allow-other-keys)
-                (should (eq 2 (length circleci-responses)))
+              (lambda (&key error-thrown data circleci-responses &allow-other-keys)
+                (should (not error-thrown))
+                (should (eq 1 (length circleci-responses)))
                 (should (equal "fooo"
                                (->> data
                                     (alist-get 'pipelines)
@@ -94,10 +96,13 @@ with the appropriate bindings, and kill the server."
 (ert-deftest circleci-api-test/test-paginated-pipeline-list ()
   (circleci-api-test/with-test-host
    (circleci-get-pipelines
+    (circleci-org-slug "gh" "sulami")
     :sync t
     :pages 2
     :handler (cl-function
-              (lambda (&key data &allow-other-keys)
+              (lambda (&key error-thrown data circleci-responses &allow-other-keys)
+                (should (not error-thrown))
+                (should (eq 2 (length circleci-responses)))
                 (should (equal "baar"
                                (->> data
                                     (alist-get 'pipelines)
@@ -107,7 +112,7 @@ with the appropriate bindings, and kill the server."
 (ert-deftest circleci-api-test/test-project ()
   (circleci-api-test/with-test-host
    (circleci-get-project
-    (circleci-project-triplet "gh" "sulami" "circleci-api")
+    (circleci-project-slug "gh" "sulami" "circleci-api")
     :sync t
     :handler (cl-function
               (lambda (&key response data &allow-other-keys)

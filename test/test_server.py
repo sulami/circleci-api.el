@@ -9,6 +9,9 @@ def root():
 
 @app.route('/api/v2/pipeline')
 def pipelines():
+    org_slug = request.args.get('org-slug', None)
+    if org_slug is None:
+        return jsonify(message='You must provide an org-slug.')
     page_token = request.args.get('page-token', None)
     print(page_token)
     if page_token == 'abc':

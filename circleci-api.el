@@ -48,13 +48,13 @@
 (defun circleci--route--api-v2 () (concat (circleci--route--api-root) "/v2"))
 (defun circleci--route--pipeline () (concat (circleci--route--api-v2) "/pipeline"))
 
-(defun circleci--route--project (project-triplet)
-  "Return the API route for the project at PROJECT-TRIPLET."
-  (concat (circleci--route--api-v2) "/project/" project-triplet))
+(defun circleci--route--project (project-slug)
+  "Return the API route for the project at PROJECT-SLUG."
+  (concat (circleci--route--api-v2) "/project/" project-slug))
 
-(defun circleci--route--project-pipelines (project-triplet)
-  "Return the API route for pipelines of the project at PROJECT-TRIPLET."
-  (concat (circleci--route--project project-triplet)
+(defun circleci--route--project-pipelines (project-slug)
+  "Return the API route for pipelines of the project at PROJECT-SLUG."
+  (concat (circleci--route--project project-slug)
           "/pipeline"))
 
 (defun circleci--route--pipeline-by-id (pipeline-id)
@@ -85,6 +85,7 @@ was paginated."
                                       (method "GET")
                                       (token circleci-api-token)
                                       (page-token nil)
+                                      (params nil)
                                       (handler #'circleci--default-handler)
                                       (sync nil))
   "Run the request at ROUTE with authN.
@@ -102,7 +103,10 @@ HANDLER is the handler function to run on success, defaulting to
 `circleci--default-handler'."
   (request
     route
-    :params (when page-token (list (cons "page-token" page-token)))
+    :params (cl-concatenate
+             'list
+             (when params params)
+             (when page-token (list (cons "page-token" page-token))))
     :type method
     :headers (list (cons "Circle-Token" token))
     :parser 'json-read
@@ -114,6 +118,7 @@ HANDLER is the handler function to run on success, defaulting to
                                         error-thrown
                                         symbol-status
                                         response
+                                        params
                                         circleci-route
                                         circleci-args
                                         circleci-handler
@@ -188,25 +193,30 @@ TBD."
 
 ;; External interface:
 
-(defun circleci-project-triplet (vcs owner repo)
-  "Construct the project triplet VCS/OWNER/REPO."
+(defun circleci-org-slug (vcs owner)
+  "Construct the org slug VCS/OWNER."
+  (concat vcs "/" owner))
+
+(defun circleci-project-slug (vcs owner repo)
+  "Construct the project slug VCS/OWNER/REPO."
   (concat vcs "/" owner "/" repo))
 
-(cl-defun circleci-get-pipelines (&rest args &allow-other-keys)
-  "Get recent pipelines for the user.
+(cl-defun circleci-get-pipelines (org-slug &rest args &allow-other-keys)
+  "Get recent pipelines for the org with ORG-SLUG.
 
 Supply PAGES as a keyword argument to fetch several pages. See
 `circleci-run-paginated-request' for more info."
   (apply
    #'circleci-run-paginated-request
    (circleci--route--pipeline)
+   :params (list (cons "org-slug" org-slug))
    args))
 
-(cl-defun circleci-get-project (project-triplet &rest args &allow-other-keys)
+(cl-defun circleci-get-project (project-slug &rest args &allow-other-keys)
   "Get a project."
   (apply
    #'circleci-run-request
-   (circleci--route--project project-triplet)
+   (circleci--route--project project-slug)
    args))
 
 (provide 'circleci-api)
