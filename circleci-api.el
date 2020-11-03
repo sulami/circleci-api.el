@@ -232,10 +232,17 @@ Supply PAGES as a keyword argument to fetch several pages. See
    args))
 
 (cl-defun circleci-get-pipeline-config (pipeline-id &rest args &allow-other-keys)
-  "Get config for the pipeline with PIPELINE-ID."
+  "Get the config for the pipeline with PIPELINE-ID."
   (apply
    #'circleci-run-request
    (circleci--route--pipeline-config pipeline-id)
+   args))
+
+(cl-defun circleci-get-pipeline-workflows (pipeline-id &rest args &allow-other-keys)
+  "Get the workflows for the pipeline with PIPELINE-ID."
+  (apply
+   #'circleci-run-paginated-request
+   (circleci--route--pipeline-workflows pipeline-id)
    args))
 
 (provide 'circleci-api)

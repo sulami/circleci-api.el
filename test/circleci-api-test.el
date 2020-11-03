@@ -89,7 +89,7 @@ with the appropriate bindings, and kill the server."
                 (should (eq 1 (length circleci-responses)))
                 (should (equal "fooo"
                                (->> data
-                                    (alist-get 'pipelines)
+                                    (alist-get 'items)
                                     (anth 0)
                                     (alist-get 'id)))))))))
 
@@ -105,7 +105,7 @@ with the appropriate bindings, and kill the server."
                 (should (eq 2 (length circleci-responses)))
                 (should (equal "baar"
                                (->> data
-                                    (alist-get 'pipelines)
+                                    (alist-get 'items)
                                     (anth 0)
                                     (alist-get 'id)))))))))
 
@@ -121,7 +121,7 @@ with the appropriate bindings, and kill the server."
                 (should (eq 2 (length circleci-responses)))
                 (should (equal "baar"
                                (->> data
-                                    (alist-get 'pipelines)
+                                    (alist-get 'items)
                                     (anth 0)
                                     (alist-get 'id)))))))))
 
