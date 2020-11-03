@@ -60,4 +60,15 @@ def project_pipelines(vcs, owner, repo):
     return jsonify(next_page_token='abc',
                    items=[{'id': 'fooo'}])
 
+@app.route('/api/v2/project/<vcs>/<owner>/<repo>/pipeline/mine')
+def my_project_pipelines(vcs, owner, repo):
+    page_token = request.args.get('page-token', None)
+    if page_token == 'abc':
+        return jsonify(next_page_token=None,
+                       items=[{'id': 'baaz'}])
+    if page_token:
+        return jsonify(message='Invalid pagination token'), 400
+    return jsonify(next_page_token='abc',
+                   items=[{'id': 'quux'}])
+
 app.run()

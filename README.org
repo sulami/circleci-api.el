@@ -62,7 +62,7 @@ apropos RET circleci RET= can help with discovery.
 - [X] Pipeline workflows
 - [X] Pipelines by org
 - [X] Pipelines by project
-- [ ] Pipelines by user
+- [X] Pipelines by user
 - [ ] Trigger pipeline
 - [ ] Workflow by ID
 - [ ] Workflow jobs

@@ -199,6 +199,19 @@ with the appropriate bindings, and kill the server."
                                     (anth 0)
                                     (alist-get 'id)))))))))
 
+(ert-deftest circleci-api-test/test-my-project-pipelines ()
+  (circleci-api-test/with-test-host
+   (circleci-get-my-project-pipelines
+    (circleci-project-slug "gh" "sulami" "circleci-api")
+    :sync t
+    :handler (cl-function
+              (lambda (&key data &allow-other-keys)
+                (should (equal "quux"
+                               (->> data
+                                    (alist-get 'items)
+                                    (anth 0)
+                                    (alist-get 'id)))))))))
+
 (provide 'circleci-api-test)
 
 ;;; circleci-api-test.el ends here

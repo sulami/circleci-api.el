@@ -70,6 +70,11 @@
   (concat (circleci--route--project project-slug)
           "/pipeline"))
 
+(defun circleci--route--my-project-pipelines (project-slug)
+  "Return the API route for user's pipelines of the project at PROJECT-SLUG."
+  (concat (circleci--route--project-pipelines project-slug)
+          "/mine"))
+
 (defun circleci--route--pipeline-by-id (pipeline-id)
   "Return the API route for the pipeline with PIPELINE-ID."
   (concat (circleci--route--pipeline) "/" pipeline-id))
@@ -292,6 +297,18 @@ Supply PAGES as a keyword argument to fetch several pages. See
   (apply
    #'circleci-run-paginated-request
    (circleci--route--project-pipelines project-slug)
+   args))
+
+(cl-defun circleci-get-my-project-pipelines (project-slug &rest args &allow-other-keys)
+  "Get your pipelines for the project with PROJECT-SLUG.
+
+ARGS is passed to `circleci-run-paginated-request'.
+
+Supply PAGES as a keyword argument to fetch several pages. See
+`circleci-run-paginated-request' for more info."
+  (apply
+   #'circleci-run-paginated-request
+   (circleci--route--my-project-pipelines project-slug)
    args))
 
 (provide 'circleci-api)
