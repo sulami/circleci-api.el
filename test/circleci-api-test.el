@@ -28,6 +28,10 @@
 (ert-deftest circleci-api-test/sanity-test ()
   (should (equal 1 1)))
 
+(ert-deftest circleci-api-test/test-project-triplet ()
+  (should (equal "gh/sulami/circleci-api"
+                 (circleci-project-triplet "gh" "sulami" "circleci-api"))))
+
 (cl-defmacro circleci-api-test/with-test-host (&body body)
   "Run BODY against the local test API.
 

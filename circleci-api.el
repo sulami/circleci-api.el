@@ -47,15 +47,10 @@
 (defun circleci--route--api-root () (concat circleci-api-host "/api"))
 (defun circleci--route--api-v2 () (concat (circleci--route--api-root) "/v2"))
 (defun circleci--route--pipeline () (concat (circleci--route--api-v2) "/pipeline"))
-(defun circleci--route--project () (concat (circleci--route--api-v2) "/project"))
 
-(defun circleci--project-triplet (vcs owner repo)
-  "Make the project triplet VCS/OWNER/REPO."
-  (concat vcs "/" owner "/" repo))
-
-(defun circleci--route--project-route (project-triplet)
+(defun circleci--route--project (project-triplet)
   "Return the API route for the project at PROJECT-TRIPLET."
-  (concat (circleci--route--project) "/" project-triplet))
+  (concat (circleci--route--route) "/project/" project-triplet))
 
 (defun circleci--route--project-pipelines (project-triplet)
   "Return the API route for pipelines of the project at PROJECT-TRIPLET."
@@ -192,6 +187,10 @@ TBD."
          args))
 
 ;; External interface:
+
+(defun circleci-project-triplet (vcs owner repo)
+  "Construct the project triplet VCS/OWNER/REPO."
+  (concat vcs "/" owner "/" repo))
 
 (cl-defun circleci-get-pipelines (&rest args &allow-other-keys)
   "Get recent pipelines for the user."
