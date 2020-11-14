@@ -49,8 +49,10 @@ def pipeline_workflows(pipeline_id):
     return jsonify(next_page_token='abc',
                    items=[{'id': 'fooo'}])
 
-@app.route('/api/v2/project/<vcs>/<owner>/<repo>/pipeline')
+@app.route('/api/v2/project/<vcs>/<owner>/<repo>/pipeline', methods=['GET', 'POST'])
 def project_pipelines(vcs, owner, repo):
+    if 'POST' == request.method:
+        return jsonify(request.json)
     page_token = request.args.get('page-token', None)
     if page_token == 'abc':
         return jsonify(next_page_token=None,

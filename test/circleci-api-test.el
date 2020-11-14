@@ -50,7 +50,7 @@ with the appropriate bindings, and kill the server."
                                        "-p"
                                        "pythonPackages.flask"
                                        "--command"
-                                       (concat "python3 " (expand-file-name "test_server.py"))))
+                                       (concat "python " (expand-file-name "test_server.py"))))
          (circleci-api-host "http://localhost:5000")
          (circleci-api-token "test-token"))
      (unwind-protect
@@ -234,6 +234,50 @@ with the appropriate bindings, and kill the server."
                                     (alist-get 'items)
                                     (anth 0)
                                     (alist-get 'number)))))))))
+
+(ert-deftest circleci-api-test/test-trigger-pipeline-branch ()
+  (circleci-api-test/with-test-host
+   (circleci-trigger-pipeline
+    (circleci-project-slug "gh" "sulami" "circleci-api")
+    :branch "master"
+    :pipeline-parameters '((foo . bar))
+    :sync t
+    :handler (cl-function
+              (lambda (&key data &allow-other-keys)
+                (should (equal "master"
+                               (alist-get 'branch data)))
+                (should (equal "bar"
+                               (->> data
+                                    (alist-get 'parameters)
+                                    (alist-get 'foo)))))))))
+
+(ert-deftest circleci-api-test/test-trigger-pipeline-tag ()
+  (circleci-api-test/with-test-host
+   (circleci-trigger-pipeline
+    (circleci-project-slug "gh" "sulami" "circleci-api")
+    :tag "v1.2"
+    :sync t
+    :handler (cl-function
+              (lambda (&key data &allow-other-keys)
+                (should (equal "v1.2"
+                               (alist-get 'tag data))))))))
+
+(ert-deftest circleci-api-test/test-trigger-pipeline-both ()
+  (should-error
+   (circleci-trigger-pipeline
+    (circleci-project-slug "gh" "sulami" "circleci-api")
+    :branch "master"
+    :tag "v1.2"
+    :pipeline-parameters '((foo . bar))
+    :sync t
+    :handler (cl-function
+              (lambda (&key data &allow-other-keys)
+                (should (equal "v1.2"
+                               (alist-get 'tag data)))
+                (should (equal "bar"
+                               (->> data
+                                    (alist-get 'parameters)
+                                    (alist-get 'foo)))))))))
 
 (provide 'circleci-api-test)
 

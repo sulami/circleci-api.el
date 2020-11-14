@@ -122,6 +122,7 @@ was paginated."
                                       (token circleci-api-token)
                                       (page-token nil)
                                       (params nil)
+                                      (data nil)
                                       (handler #'circleci--default-handler)
                                       (sync nil))
   "Run the request at ROUTE with authN.
@@ -137,6 +138,9 @@ PAGE-TOKEN is the optional pagination token for list endpoints.
 
 PARAMS is appended to the HTTP query parameters.
 
+DATA is POST-data as a native object, which is then passed to
+`json-encode'.
+
 HANDLER is the handler function to run on success, defaulting to
 `circleci--default-handler'.
 
@@ -147,8 +151,11 @@ If SYNC is non-nil, this request is run synchronously."
              'list
              (when params params)
              (when page-token (list (cons "page-token" page-token))))
+    :data (when data (json-encode data))
     :type method
-    :headers (list (cons "Circle-Token" token))
+    :headers (list (cons "Circle-Token" token)
+                   (cons "Content-Type" "application/json")
+                   (cons "Accept" "application/json"))
     :parser 'json-read
     :complete handler
     :sync sync))
@@ -343,6 +350,36 @@ Supply PAGES as a keyword argument to fetch several pages. See
   (apply
    #'circleci-run-paginated-request
    (circleci--route--workflow-jobs workflow-id)
+   args))
+
+(cl-defun circleci-trigger-pipeline (project-slug &rest args
+                                                  &key
+                                                  branch
+                                                  tag
+                                                  pipeline-parameters
+                                                  &allow-other-keys)
+  "Trigger a pipeine for the project with PROJECT-SLUG.
+
+Specifying either BRANCH or TAG (but not both) is required.
+
+PIPELINE-PARMATERS are a native alist, which is passed in as pipeline
+parameters.
+
+ARGS is passed to `circleci-run-paginated-request'."
+  (unless (or branch tag)
+    (error "Need to specify either branch or tag"))
+  (when (and branch tag)
+    (error "Cannot specify branch and tag"))
+  (apply
+   #'circleci-run-request
+   (circleci--route--project-pipelines project-slug)
+   :method "POST"
+   :data (cl-concatenate
+          'list
+          (list (cons "parameters" pipeline-parameters))
+          (when branch (list (cons "branch" branch)))
+          (when tag (list (cons "tag" tag))))
+   :allow-other-keys t
    args))
 
 (provide 'circleci-api)
