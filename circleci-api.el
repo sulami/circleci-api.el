@@ -262,14 +262,17 @@ TBD."
 
 ;; External interface:
 
+;;;###autoload
 (defun circleci-org-slug (vcs owner)
   "Construct the org slug VCS/OWNER."
   (concat vcs "/" owner))
 
+;;;###autoload
 (defun circleci-project-slug (vcs owner repo)
   "Construct the project slug VCS/OWNER/REPO."
   (concat vcs "/" owner "/" repo))
 
+;;;###autoload
 (cl-defun circleci-get-pipelines (org-slug &rest args
                                            &key
                                            (mine nil)
@@ -291,6 +294,7 @@ Supply PAGES as a keyword argument to fetch several pages. See
             (when mine (list (cons "mine" mine))))
    args))
 
+;;;###autoload
 (cl-defun circleci-get-project (project-slug &rest args &allow-other-keys)
   "Get the project with PROJECT-SLUG.
 
@@ -300,6 +304,7 @@ ARGS is passed to `circleci-run-request'."
    (circleci--route--project project-slug)
    args))
 
+;;;###autoload
 (cl-defun circleci-get-pipeline (pipeline-id &rest args &allow-other-keys)
   "Get a pipeline by PIPELINE-ID.
 
@@ -309,6 +314,7 @@ ARGS is passed to `circleci-run-request'."
    (circleci--route--pipeline-by-id pipeline-id)
    args))
 
+;;;###autoload
 (cl-defun circleci-get-pipeline-config (pipeline-id &rest args &allow-other-keys)
   "Get the config for the pipeline with PIPELINE-ID.
 
@@ -318,6 +324,7 @@ ARGS is passed to `circleci-run-request'."
    (circleci--route--pipeline-config pipeline-id)
    args))
 
+;;;###autoload
 (cl-defun circleci-get-pipeline-workflows (pipeline-id &rest args &allow-other-keys)
   "Get the workflows for the pipeline with PIPELINE-ID.
 
@@ -330,6 +337,7 @@ Supply PAGES as a keyword argument to fetch several pages. See
    (circleci--route--pipeline-workflows pipeline-id)
    args))
 
+;;;###autoload
 (cl-defun circleci-get-project-pipelines (project-slug &rest args &allow-other-keys)
   "Get the pipelines for the project with PROJECT-SLUG.
 
@@ -342,6 +350,7 @@ Supply PAGES as a keyword argument to fetch several pages. See
    (circleci--route--project-pipelines project-slug)
    args))
 
+;;;###autoload
 (cl-defun circleci-get-my-project-pipelines (project-slug &rest args &allow-other-keys)
   "Get your pipelines for the project with PROJECT-SLUG.
 
@@ -354,6 +363,7 @@ Supply PAGES as a keyword argument to fetch several pages. See
    (circleci--route--my-project-pipelines project-slug)
    args))
 
+;;;###autoload
 (cl-defun circleci-get-workflow (workflow-id &rest args &allow-other-keys)
   "Get the workflow with WORKFLOW-ID.
 
@@ -363,6 +373,7 @@ ARGS is passed to `circleci-run-request'."
    (circleci--route--workflow-by-id workflow-id)
    args))
 
+;;;###autoload
 (cl-defun circleci-get-workflow-jobs (workflow-id &rest args &allow-other-keys)
   "Get the jobs for the workflow with WORKFLOW-ID.
 
@@ -375,6 +386,7 @@ Supply PAGES as a keyword argument to fetch several pages. See
    (circleci--route--workflow-jobs workflow-id)
    args))
 
+;;;###autoload
 (cl-defun circleci-trigger-pipeline (project-slug &rest args
                                                   &key
                                                   (branch nil)
@@ -405,6 +417,7 @@ ARGS is passed to `circleci-run-request'."
    :allow-other-keys t
    args))
 
+;;;###autoload
 (cl-defun circleci-cancel-workflow (workflow-id &rest args &allow-other-keys)
   "Cancel the workflow with WORKFLOW-ID.
 
@@ -415,6 +428,7 @@ ARGS is passed to `circleci-run-request'."
    :method "POST"
    args))
 
+;;;###autoload
 (cl-defun circleci-rerun-workflow (workflow-id &rest args
                                                &key
                                                (from-failed nil)
@@ -433,6 +447,7 @@ ARGS is passed to `circleci-run-request'."
    :allow-other-keys t
    args))
 
+;;;###autoload
 (cl-defun circleci-approve-job (workflow-id job-id &rest args &allow-other-keys)
   "Approve the job with JOB-ID in the workflow with WORKFLOW-ID.
 
