@@ -84,6 +84,14 @@
   (concat (circleci--route--workflow-by-id workflow-id)
           "/job"))
 
+(defun circleci--route--job-approve (workflow-id job-id)
+  "Return the API route for approving the job with JOB-ID.
+
+Also needs WORKFLOW-ID from the parent workflow."
+  (concat (circleci--route--workflow-by-id workflow-id)
+          "/approve/"
+          job-id))
+
 (defun circleci--route--project (project-slug)
   "Return the API route for the project at PROJECT-SLUG."
   (concat (circleci--route--api-v2) "/project/" project-slug))
@@ -422,6 +430,17 @@ ARGS is passed to `circleci-run-request'."
    (circleci--route--workflow-rerun workflow-id)
    :method "POST"
    :data (when from-failed '((from-failed t)))
+   :allow-other-keys t
+   args))
+
+(cl-defun circleci-approve-job (workflow-id job-id &rest args &allow-other-keys)
+  "Approve the job with JOB-ID in the workflow with WORKFLOW-ID.
+
+ARGS is passed to `circleci-run-request'."
+  (apply
+   #'circleci-run-request
+   (circleci--route--job-approve workflow-id job-id)
+   :method "POST"
    :allow-other-keys t
    args))
 

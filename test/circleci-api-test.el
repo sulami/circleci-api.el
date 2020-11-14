@@ -313,6 +313,19 @@ with the appropriate bindings, and kill the server."
                                (alist-get 'id data)))
                 (should (alist-get 'from_failed data)))))))
 
+(ert-deftest circleci-api-test/test-approve-job ()
+  (circleci-api-test/with-test-host
+   (circleci-approve-job
+    "workflow-id"
+    "job-id"
+    :sync t
+    :handler (cl-function
+              (lambda (&key data &allow-other-keys)
+                (should (equal "workflow-id"
+                               (alist-get 'workflow_id data)))
+                (should (equal "job-id"
+                               (alist-get 'job_id data))))))))
+
 (provide 'circleci-api-test)
 
 ;;; circleci-api-test.el ends here

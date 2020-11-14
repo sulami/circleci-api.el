@@ -90,6 +90,11 @@ def workflow_rerun(workflow_id):
     return jsonify(id=workflow_id,
                    from_failed=from_failed)
 
+@app.route('/api/v2/workflow/<workflow_id>/approve/<job_id>', methods=['POST'])
+def job_approve(workflow_id, job_id):
+    return jsonify(workflow_id=workflow_id,
+                   job_id=job_id)
+
 @app.route('/api/v2/workflow/<workflow_id>/job')
 def workflow_jobs(workflow_id):
     page_token = request.args.get('page-token', None)
