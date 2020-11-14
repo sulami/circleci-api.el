@@ -279,6 +279,16 @@ with the appropriate bindings, and kill the server."
                                     (alist-get 'parameters)
                                     (alist-get 'foo)))))))))
 
+(ert-deftest circleci-api-test/test-cancel-workflow ()
+  (circleci-api-test/with-test-host
+   (circleci-cancel-workflow
+    "workflow-id"
+    :sync t
+    :handler (cl-function
+              (lambda (&key data &allow-other-keys)
+                (should (equal "workflow-id"
+                               (alist-get 'id data))))))))
+
 (provide 'circleci-api-test)
 
 ;;; circleci-api-test.el ends here

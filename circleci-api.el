@@ -69,6 +69,11 @@
           "/workflow/"
           workflow-id))
 
+(defun circleci--route--workflow-cancel (workflow-id)
+  "Return the API route for cancelling the workflow with WORKFLOW-ID."
+  (concat (circleci--route--workflow-by-id workflow-id)
+          "/cancel"))
+
 (defun circleci--route--workflow-jobs (workflow-id)
   "Return the API route for the jobs of the workflow with WORKFLOW-ID."
   (concat (circleci--route--workflow-by-id workflow-id)
@@ -380,6 +385,16 @@ ARGS is passed to `circleci-run-paginated-request'."
           (when branch (list (cons "branch" branch)))
           (when tag (list (cons "tag" tag))))
    :allow-other-keys t
+   args))
+
+(cl-defun circleci-cancel-workflow (workflow-id &rest args &allow-other-keys)
+  "Cancel the workflow with WORKFLOW-ID.
+
+ARGS is passed to `circleci-run-paginated-request'."
+  (apply
+   #'circleci-run-request
+   (circleci--route--workflow-cancel workflow-id)
+   :method "POST"
    args))
 
 (provide 'circleci-api)

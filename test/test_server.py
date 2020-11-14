@@ -77,6 +77,10 @@ def my_project_pipelines(vcs, owner, repo):
 def workflow(workflow_id):
     return jsonify(id=workflow_id)
 
+@app.route('/api/v2/workflow/<workflow_id>/cancel', methods=['POST'])
+def workflow_cancel(workflow_id):
+    return jsonify(id=workflow_id)
+
 @app.route('/api/v2/workflow/<workflow_id>/job')
 def workflow_jobs(workflow_id):
     page_token = request.args.get('page-token', None)
