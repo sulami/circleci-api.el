@@ -74,6 +74,11 @@
   (concat (circleci--route--workflow-by-id workflow-id)
           "/cancel"))
 
+(defun circleci--route--workflow-rerun (workflow-id)
+  "Return the API route for reruning the workflow with WORKFLOW-ID."
+  (concat (circleci--route--workflow-by-id workflow-id)
+          "/rerun"))
+
 (defun circleci--route--workflow-jobs (workflow-id)
   "Return the API route for the jobs of the workflow with WORKFLOW-ID."
   (concat (circleci--route--workflow-by-id workflow-id)
@@ -156,7 +161,12 @@ If SYNC is non-nil, this request is run synchronously."
              'list
              (when params params)
              (when page-token (list (cons "page-token" page-token))))
-    :data (when data (json-encode data))
+    :data (cond
+           (data
+            (json-encode data))
+           ((equal "POST" method)
+            "{}")
+           (t nil))
     :type method
     :headers (list (cons "Circle-Token" token)
                    (cons "Content-Type" "application/json")
@@ -359,9 +369,9 @@ Supply PAGES as a keyword argument to fetch several pages. See
 
 (cl-defun circleci-trigger-pipeline (project-slug &rest args
                                                   &key
-                                                  branch
-                                                  tag
-                                                  pipeline-parameters
+                                                  (branch nil)
+                                                  (tag nil)
+                                                  (pipeline-parameters nil)
                                                   &allow-other-keys)
   "Trigger a pipeine for the project with PROJECT-SLUG.
 
@@ -370,7 +380,7 @@ Specifying either BRANCH or TAG (but not both) is required.
 PIPELINE-PARMATERS are a native alist, which is passed in as pipeline
 parameters.
 
-ARGS is passed to `circleci-run-paginated-request'."
+ARGS is passed to `circleci-run-request'."
   (unless (or branch tag)
     (error "Need to specify either branch or tag"))
   (when (and branch tag)
@@ -390,11 +400,29 @@ ARGS is passed to `circleci-run-paginated-request'."
 (cl-defun circleci-cancel-workflow (workflow-id &rest args &allow-other-keys)
   "Cancel the workflow with WORKFLOW-ID.
 
-ARGS is passed to `circleci-run-paginated-request'."
+ARGS is passed to `circleci-run-request'."
   (apply
    #'circleci-run-request
    (circleci--route--workflow-cancel workflow-id)
    :method "POST"
+   args))
+
+(cl-defun circleci-rerun-workflow (workflow-id &rest args
+                                               &key
+                                               (from-failed nil)
+                                               &allow-other-keys)
+  "Rerun the workflow with WORKFLOW-ID.
+
+If FROM-FAILED is non-nil rerun from the failed job, otherwise rerun
+everything.
+
+ARGS is passed to `circleci-run-request'."
+  (apply
+   #'circleci-run-request
+   (circleci--route--workflow-rerun workflow-id)
+   :method "POST"
+   :data (when from-failed '((from-failed t)))
+   :allow-other-keys t
    args))
 
 (provide 'circleci-api)

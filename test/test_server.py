@@ -81,6 +81,15 @@ def workflow(workflow_id):
 def workflow_cancel(workflow_id):
     return jsonify(id=workflow_id)
 
+@app.route('/api/v2/workflow/<workflow_id>/rerun', methods=['POST'])
+def workflow_rerun(workflow_id):
+    from_failed = False
+    if request.json:
+        print(request.json)
+        from_failed = request.json.get('from_failed', False)
+    return jsonify(id=workflow_id,
+                   from_failed=from_failed)
+
 @app.route('/api/v2/workflow/<workflow_id>/job')
 def workflow_jobs(workflow_id):
     page_token = request.args.get('page-token', None)

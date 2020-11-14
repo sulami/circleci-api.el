@@ -67,7 +67,7 @@ apropos RET circleci RET= can help with discovery.
 - [X] Workflow by ID
 - [X] Workflow jobs
 - [X] Cancel workflow
-- [ ] Rerun workflow
+- [X] Rerun workflow
 - [ ] Approve a job
 
 Anything not included in the list above is not implemented yet.

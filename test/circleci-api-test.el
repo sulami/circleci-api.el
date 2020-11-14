@@ -289,6 +289,30 @@ with the appropriate bindings, and kill the server."
                 (should (equal "workflow-id"
                                (alist-get 'id data))))))))
 
+(ert-deftest circleci-api-test/test-rerun-workflow ()
+  (circleci-api-test/with-test-host
+   (circleci-rerun-workflow
+    "workflow-id"
+    :sync t
+    :handler (cl-function
+              (lambda (&key data &allow-other-keys)
+                (should (equal "workflow-id"
+                               (alist-get 'id data)))
+                (should (equal :json-false
+                               (alist-get 'from_failed data))))))))
+
+(ert-deftest circleci-api-test/test-rerun-workflow-from-failed ()
+  (circleci-api-test/with-test-host
+   (circleci-rerun-workflow
+    "workflow-id"
+    :from-failed t
+    :sync t
+    :handler (cl-function
+              (lambda (&key data &allow-other-keys)
+                (should (equal "workflow-id"
+                               (alist-get 'id data)))
+                (should (alist-get 'from_failed data)))))))
+
 (provide 'circleci-api-test)
 
 ;;; circleci-api-test.el ends here
