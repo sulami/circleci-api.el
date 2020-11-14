@@ -4,7 +4,7 @@
 ;; Maintainer: Robin Schroer
 ;; Version: 0.1
 ;; Homepage: https://github.com/sulami/circleci-api
-;; Package-Requires: ((emacs "25.1") (request "0.3.2"))
+;; Package-Requires: ((emacs "27") (request "0.3.2"))
 
 
 ;; This file is not part of GNU Emacs
