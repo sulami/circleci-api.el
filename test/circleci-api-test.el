@@ -44,13 +44,18 @@ Attempts to bring up the test server using nix-shell, run the test
 with the appropriate bindings, and kill the server."
   `(let ((_ (get-buffer-create "*circleci-test-server*"))
          (_ (with-current-buffer "*circleci-test-server*" (erase-buffer)))
-         (host-process (start-process "circleci-test-server"
-                                       "*circleci-test-server*"
-                                       (executable-find "nix-shell")
-                                       "-p"
-                                       "pythonPackages.flask"
-                                       "--command"
-                                       (concat "python " (expand-file-name "test_server.py"))))
+         (host-process (if (getenv "CI")
+                           (start-process "circleci-test-server"
+                                          "*circleci-test-server*"
+                                          (executable-find "python3")
+                                          (expand-file-name "test/test_server.py"))
+                         (start-process "circleci-test-server"
+                                        "*circleci-test-server*"
+                                        (executable-find "nix-shell")
+                                        "-p"
+                                        "pythonPackages.flask"
+                                        "--command"
+                                        (concat "python " (expand-file-name "test_server.py")))))
          (circleci-api-host "http://localhost:5000")
          (circleci-api-token "test-token"))
      (unwind-protect

@@ -23,7 +23,8 @@ jobs:
           name: Install external dependencies
           command: |
             apk update
-            apk add git
+            apk add git python3
+            pip3 install flask
       - run:
           name: Run tests
           command: |
