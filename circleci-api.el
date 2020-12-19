@@ -1,4 +1,4 @@
-;;; circleci-api.el --- Bindings for the CircleCI API. -*- lexical-binding: t -*-
+;;; circleci-api.el --- Bindings for the CircleCI API -*- lexical-binding: t -*-
 
 ;; Author: Robin Schroer
 ;; Maintainer: Robin Schroer
