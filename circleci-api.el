@@ -29,7 +29,7 @@
 
 ;;; Code:
 
-(require 'cl-macs)
+(require 'cl-lib)
 (require 'request)
 
 ;; Customisation:
