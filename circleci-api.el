@@ -51,78 +51,78 @@
 
 ;; Routes:
 
-(defun circleci--route--api-root ()
+(defun circleci-api--route--api-root ()
   "Return the API root."
   (concat circleci-api-host "/api"))
 
-(defun circleci--route--api-v2 ()
+(defun circleci-api--route--api-v2 ()
   "Return the APIv2 root."
-  (concat (circleci--route--api-root) "/v2"))
+  (concat (circleci-api--route--api-root) "/v2"))
 
-(defun circleci--route--pipeline ()
+(defun circleci-api--route--pipeline ()
   "Return the API route for pipelines."
-  (concat (circleci--route--api-v2) "/pipeline"))
+  (concat (circleci-api--route--api-v2) "/pipeline"))
 
-(defun circleci--route--workflow-by-id (workflow-id)
+(defun circleci-api--route--workflow-by-id (workflow-id)
   "Return the API route for the workflows with WORKFLOW-ID."
-  (concat (circleci--route--api-v2)
+  (concat (circleci-api--route--api-v2)
           "/workflow/"
           workflow-id))
 
-(defun circleci--route--workflow-cancel (workflow-id)
+(defun circleci-api--route--workflow-cancel (workflow-id)
   "Return the API route for cancelling the workflow with WORKFLOW-ID."
-  (concat (circleci--route--workflow-by-id workflow-id)
+  (concat (circleci-api--route--workflow-by-id workflow-id)
           "/cancel"))
 
-(defun circleci--route--workflow-rerun (workflow-id)
+(defun circleci-api--route--workflow-rerun (workflow-id)
   "Return the API route for reruning the workflow with WORKFLOW-ID."
-  (concat (circleci--route--workflow-by-id workflow-id)
+  (concat (circleci-api--route--workflow-by-id workflow-id)
           "/rerun"))
 
-(defun circleci--route--workflow-jobs (workflow-id)
+(defun circleci-api--route--workflow-jobs (workflow-id)
   "Return the API route for the jobs of the workflow with WORKFLOW-ID."
-  (concat (circleci--route--workflow-by-id workflow-id)
+  (concat (circleci-api--route--workflow-by-id workflow-id)
           "/job"))
 
-(defun circleci--route--job-approve (workflow-id job-id)
+(defun circleci-api--route--job-approve (workflow-id job-id)
   "Return the API route for approving the job with JOB-ID.
 
 Also needs WORKFLOW-ID from the parent workflow."
-  (concat (circleci--route--workflow-by-id workflow-id)
+  (concat (circleci-api--route--workflow-by-id workflow-id)
           "/approve/"
           job-id))
 
-(defun circleci--route--project (project-slug)
+(defun circleci-api--route--project (project-slug)
   "Return the API route for the project at PROJECT-SLUG."
-  (concat (circleci--route--api-v2) "/project/" project-slug))
+  (concat (circleci-api--route--api-v2) "/project/" project-slug))
 
-(defun circleci--route--project-pipelines (project-slug)
+(defun circleci-api--route--project-pipelines (project-slug)
   "Return the API route for pipelines of the project at PROJECT-SLUG."
-  (concat (circleci--route--project project-slug)
+  (concat (circleci-api--route--project project-slug)
           "/pipeline"))
 
-(defun circleci--route--my-project-pipelines (project-slug)
+(defun circleci-api--route--my-project-pipelines (project-slug)
   "Return the API route for user's pipelines of the project at PROJECT-SLUG."
-  (concat (circleci--route--project-pipelines project-slug)
+  (concat (circleci-api--route--project-pipelines project-slug)
           "/mine"))
 
-(defun circleci--route--pipeline-by-id (pipeline-id)
+(defun circleci-api--route--pipeline-by-id (pipeline-id)
   "Return the API route for the pipeline with PIPELINE-ID."
-  (concat (circleci--route--pipeline) "/" pipeline-id))
+  (concat (circleci-api--route--pipeline) "/" pipeline-id))
 
-(defun circleci--route--pipeline-config (pipeline-id)
+(defun circleci-api--route--pipeline-config (pipeline-id)
   "Return the API route for the config of the pipeline with PIPELINE-ID."
-  (concat (circleci--route--pipeline-by-id pipeline-id)
+  (concat (circleci-api--route--pipeline-by-id pipeline-id)
           "/config"))
 
-(defun circleci--route--pipeline-workflows (pipeline-id)
+(defun circleci-api--route--pipeline-workflows (pipeline-id)
   "Return the API route for the workflows of the pipeline with PIPELINE-ID."
-  (concat (circleci--route--pipeline-by-id pipeline-id)
+  (concat (circleci-api--route--pipeline-by-id pipeline-id)
           "/workflow"))
 
 ;; Plumbing:
 
-(cl-defun circleci--default-handler (&key symbol-status circleci-responses &allow-other-keys)
+(cl-defun circleci-api--default-handler (&key symbol-status circleci-responses &allow-other-keys)
   "Default RESPONSE handler for CircleCI requests.
 
 Currently just prints some info.
@@ -141,7 +141,7 @@ was paginated."
                                       (page-token nil)
                                       (params nil)
                                       (data nil)
-                                      (handler #'circleci--default-handler)
+                                      (handler #'circleci-api--default-handler)
                                       (sync nil))
   "Run the request at ROUTE with authN.
 
@@ -160,40 +160,40 @@ DATA is POST-data as a native object, which is then passed to
 `json-encode'.
 
 HANDLER is the handler function to run on success, defaulting to
-`circleci--default-handler'.
+`circleci-api--default-handler'.
 
 If SYNC is non-nil, this request is run synchronously."
   (request
-    route
-    :params (cl-concatenate
-             'list
-             (when params params)
-             (when page-token (list (cons "page-token" page-token))))
-    :data (cond
-           (data
-            (json-encode data))
-           ((equal "POST" method)
-            "{}")
-           (t nil))
-    :type method
-    :headers (list (cons "Circle-Token" token)
-                   (cons "Content-Type" "application/json")
-                   (cons "Accept" "application/json"))
-    :parser 'json-read
-    :complete handler
-    :sync sync))
+   route
+   :params (cl-concatenate
+            'list
+            (when params params)
+            (when page-token (list (cons "page-token" page-token))))
+   :data (cond
+          (data
+           (json-encode data))
+          ((equal "POST" method)
+           "{}")
+          (t nil))
+   :type method
+   :headers (list (cons "Circle-Token" token)
+                  (cons "Content-Type" "application/json")
+                  (cons "Accept" "application/json"))
+   :parser 'json-read
+   :complete handler
+   :sync sync))
 
-(cl-defun circleci--pagination-handler (&key
-                                        data
-                                        error-thrown
-                                        symbol-status
-                                        response
-                                        circleci-route
-                                        circleci-args
-                                        circleci-handler
-                                        circleci-pages
-                                        circleci-responses
-                                        &allow-other-keys)
+(cl-defun circleci-api--pagination-handler (&key
+                                            data
+                                            error-thrown
+                                            symbol-status
+                                            response
+                                            circleci-route
+                                            circleci-args
+                                            circleci-handler
+                                            circleci-pages
+                                            circleci-responses
+                                            &allow-other-keys)
   "Response handler function for pagination.
 
 DATA, ERROR-THROWN, SYMBOL-STATUS, and RESPONSE are request-provided
@@ -216,7 +216,7 @@ passed through here to count and aggregate responses."
                circleci-route
                :page-token page-token
                :handler (lambda (&rest args)
-                          (apply #'circleci--pagination-handler
+                          (apply #'circleci-api--pagination-handler
                                  :circleci-route circleci-route
                                  :circleci-args circleci-args
                                  :circleci-handler circleci-handler
@@ -237,7 +237,7 @@ passed through here to count and aggregate responses."
 
 (cl-defun circleci-run-paginated-request (route &rest args
                                                 &key
-                                                (handler #'circleci--default-handler)
+                                                (handler #'circleci-api--default-handler)
                                                 (pages 1)
                                                 &allow-other-keys)
   "Run a request on ROUTE and keep paginating for PAGES pages.
@@ -251,7 +251,7 @@ TBD."
   (apply #'circleci-run-request
          route
          :handler (lambda (&rest handler-args)
-                    (apply #'circleci--pagination-handler
+                    (apply #'circleci-api--pagination-handler
                            :circleci-route route
                            :circleci-args args
                            :circleci-pages pages
@@ -287,7 +287,7 @@ Supply PAGES as a keyword argument to fetch several pages. See
 `circleci-run-paginated-request' for more info."
   (apply
    #'circleci-run-paginated-request
-   (circleci--route--pipeline)
+   (circleci-api--route--pipeline)
    :params (cl-concatenate
             'list
             (list (cons "org-slug" org-slug))
@@ -301,7 +301,7 @@ Supply PAGES as a keyword argument to fetch several pages. See
 ARGS is passed to `circleci-run-request'."
   (apply
    #'circleci-run-request
-   (circleci--route--project project-slug)
+   (circleci-api--route--project project-slug)
    args))
 
 ;;;###autoload
@@ -311,7 +311,7 @@ ARGS is passed to `circleci-run-request'."
 ARGS is passed to `circleci-run-request'."
   (apply
    #'circleci-run-request
-   (circleci--route--pipeline-by-id pipeline-id)
+   (circleci-api--route--pipeline-by-id pipeline-id)
    args))
 
 ;;;###autoload
@@ -321,7 +321,7 @@ ARGS is passed to `circleci-run-request'."
 ARGS is passed to `circleci-run-request'."
   (apply
    #'circleci-run-request
-   (circleci--route--pipeline-config pipeline-id)
+   (circleci-api--route--pipeline-config pipeline-id)
    args))
 
 ;;;###autoload
@@ -334,7 +334,7 @@ Supply PAGES as a keyword argument to fetch several pages. See
 `circleci-run-paginated-request' for more info."
   (apply
    #'circleci-run-paginated-request
-   (circleci--route--pipeline-workflows pipeline-id)
+   (circleci-api--route--pipeline-workflows pipeline-id)
    args))
 
 ;;;###autoload
@@ -347,7 +347,7 @@ Supply PAGES as a keyword argument to fetch several pages. See
 `circleci-run-paginated-request' for more info."
   (apply
    #'circleci-run-paginated-request
-   (circleci--route--project-pipelines project-slug)
+   (circleci-api--route--project-pipelines project-slug)
    args))
 
 ;;;###autoload
@@ -360,7 +360,7 @@ Supply PAGES as a keyword argument to fetch several pages. See
 `circleci-run-paginated-request' for more info."
   (apply
    #'circleci-run-paginated-request
-   (circleci--route--my-project-pipelines project-slug)
+   (circleci-api--route--my-project-pipelines project-slug)
    args))
 
 ;;;###autoload
@@ -370,7 +370,7 @@ Supply PAGES as a keyword argument to fetch several pages. See
 ARGS is passed to `circleci-run-request'."
   (apply
    #'circleci-run-request
-   (circleci--route--workflow-by-id workflow-id)
+   (circleci-api--route--workflow-by-id workflow-id)
    args))
 
 ;;;###autoload
@@ -383,7 +383,7 @@ Supply PAGES as a keyword argument to fetch several pages. See
 `circleci-run-paginated-request' for more info."
   (apply
    #'circleci-run-paginated-request
-   (circleci--route--workflow-jobs workflow-id)
+   (circleci-api--route--workflow-jobs workflow-id)
    args))
 
 ;;;###autoload
@@ -407,7 +407,7 @@ ARGS is passed to `circleci-run-request'."
     (error "Cannot specify branch and tag"))
   (apply
    #'circleci-run-request
-   (circleci--route--project-pipelines project-slug)
+   (circleci-api--route--project-pipelines project-slug)
    :method "POST"
    :data (cl-concatenate
           'list
@@ -424,7 +424,7 @@ ARGS is passed to `circleci-run-request'."
 ARGS is passed to `circleci-run-request'."
   (apply
    #'circleci-run-request
-   (circleci--route--workflow-cancel workflow-id)
+   (circleci-api--route--workflow-cancel workflow-id)
    :method "POST"
    args))
 
@@ -441,7 +441,7 @@ everything.
 ARGS is passed to `circleci-run-request'."
   (apply
    #'circleci-run-request
-   (circleci--route--workflow-rerun workflow-id)
+   (circleci-api--route--workflow-rerun workflow-id)
    :method "POST"
    :data (when from-failed '((from-failed t)))
    :allow-other-keys t
@@ -454,7 +454,7 @@ ARGS is passed to `circleci-run-request'."
 ARGS is passed to `circleci-run-request'."
   (apply
    #'circleci-run-request
-   (circleci--route--job-approve workflow-id job-id)
+   (circleci-api--route--job-approve workflow-id job-id)
    :method "POST"
    :allow-other-keys t
    args))
