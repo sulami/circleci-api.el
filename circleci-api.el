@@ -135,14 +135,14 @@ was paginated."
   (when circleci-responses
     (message "Ran %s requests" (length circleci-responses))))
 
-(cl-defun circleci-run-request (route &key
-                                      (method "GET")
-                                      (token circleci-api-token)
-                                      (page-token nil)
-                                      (params nil)
-                                      (data nil)
-                                      (handler #'circleci-api--default-handler)
-                                      (sync nil))
+(cl-defun circleci-api-run-request (route &key
+                                          (method "GET")
+                                          (token circleci-api-token)
+                                          (page-token nil)
+                                          (params nil)
+                                          (data nil)
+                                          (handler #'circleci-api--default-handler)
+                                          (sync nil))
   "Run the request at ROUTE with authN.
 
 Returns data parsed from JSON.
@@ -200,7 +200,7 @@ DATA, ERROR-THROWN, SYMBOL-STATUS, and RESPONSE are request-provided
 fields.
 
 CIRCLECI-ROUTE and CIRCLECI-ARGS are passed through the handler to be
-used in subsequent calls to `circleci-run-request'.
+used in subsequent calls to `circleci-api-run-request'.
 
 CIRCLECI-HANDLER is as well, but only used once the end has been
 reached, either by reaching the caller-define limit, or running out of
@@ -212,7 +212,7 @@ passed through here to count and aggregate responses."
     (if (and (not (equal 1 circleci-pages))
              page-token)
         ;; But wait, there's more.
-        (apply #'circleci-run-request
+        (apply #'circleci-api-run-request
                circleci-route
                :page-token page-token
                :handler (lambda (&rest args)
@@ -235,20 +235,20 @@ passed through here to count and aggregate responses."
              :circleci-responses (cons response circleci-responses)
              '()))))
 
-(cl-defun circleci-run-paginated-request (route &rest args
-                                                &key
-                                                (handler #'circleci-api--default-handler)
-                                                (pages 1)
-                                                &allow-other-keys)
+(cl-defun circleci-api-run-paginated-request (route &rest args
+                                                    &key
+                                                    (handler #'circleci-api--default-handler)
+                                                    (pages 1)
+                                                    &allow-other-keys)
   "Run a request on ROUTE and keep paginating for PAGES pages.
 
 Use 0 for for PAGES to keep paginating until the end, if you dare.
 
-ARGS is passed to `circleci-run-request'.
+ARGS is passed to `circleci-api-run-request'.
 
 HANDLER is the handler function to run on the final result. Signature
 TBD."
-  (apply #'circleci-run-request
+  (apply #'circleci-api-run-request
          route
          :handler (lambda (&rest handler-args)
                     (apply #'circleci-api--pagination-handler
@@ -263,30 +263,30 @@ TBD."
 ;; External interface:
 
 ;;;###autoload
-(defun circleci-org-slug (vcs owner)
+(defun circleci-api-org-slug (vcs owner)
   "Construct the org slug VCS/OWNER."
   (concat vcs "/" owner))
 
 ;;;###autoload
-(defun circleci-project-slug (vcs owner repo)
+(defun circleci-api-project-slug (vcs owner repo)
   "Construct the project slug VCS/OWNER/REPO."
   (concat vcs "/" owner "/" repo))
 
 ;;;###autoload
-(cl-defun circleci-get-pipelines (org-slug &rest args
-                                           &key
-                                           (mine nil)
-                                           &allow-other-keys)
+(cl-defun circleci-api-get-pipelines (org-slug &rest args
+                                               &key
+                                               (mine nil)
+                                               &allow-other-keys)
   "Get recent pipelines for the org with ORG-SLUG.
 
 If MINE is non-nil, only returns pipelines for the authenticated user.
 
-ARGS is passed to `circleci-run-request'.
+ARGS is passed to `circleci-api-run-request'.
 
 Supply PAGES as a keyword argument to fetch several pages. See
-`circleci-run-paginated-request' for more info."
+`circleci-api-run-paginated-request' for more info."
   (apply
-   #'circleci-run-paginated-request
+   #'circleci-api-run-paginated-request
    (circleci-api--route--pipeline)
    :params (cl-concatenate
             'list
@@ -295,104 +295,104 @@ Supply PAGES as a keyword argument to fetch several pages. See
    args))
 
 ;;;###autoload
-(cl-defun circleci-get-project (project-slug &rest args &allow-other-keys)
+(cl-defun circleci-api-get-project (project-slug &rest args &allow-other-keys)
   "Get the project with PROJECT-SLUG.
 
-ARGS is passed to `circleci-run-request'."
+ARGS is passed to `circleci-api-run-request'."
   (apply
-   #'circleci-run-request
+   #'circleci-api-run-request
    (circleci-api--route--project project-slug)
    args))
 
 ;;;###autoload
-(cl-defun circleci-get-pipeline (pipeline-id &rest args &allow-other-keys)
+(cl-defun circleci-api-get-pipeline (pipeline-id &rest args &allow-other-keys)
   "Get a pipeline by PIPELINE-ID.
 
-ARGS is passed to `circleci-run-request'."
+ARGS is passed to `circleci-api-run-request'."
   (apply
-   #'circleci-run-request
+   #'circleci-api-run-request
    (circleci-api--route--pipeline-by-id pipeline-id)
    args))
 
 ;;;###autoload
-(cl-defun circleci-get-pipeline-config (pipeline-id &rest args &allow-other-keys)
+(cl-defun circleci-api-get-pipeline-config (pipeline-id &rest args &allow-other-keys)
   "Get the config for the pipeline with PIPELINE-ID.
 
-ARGS is passed to `circleci-run-request'."
+ARGS is passed to `circleci-api-run-request'."
   (apply
-   #'circleci-run-request
+   #'circleci-api-run-request
    (circleci-api--route--pipeline-config pipeline-id)
    args))
 
 ;;;###autoload
-(cl-defun circleci-get-pipeline-workflows (pipeline-id &rest args &allow-other-keys)
+(cl-defun circleci-api-get-pipeline-workflows (pipeline-id &rest args &allow-other-keys)
   "Get the workflows for the pipeline with PIPELINE-ID.
 
-ARGS is passed to `circleci-run-paginated-request'.
+ARGS is passed to `circleci-api-run-paginated-request'.
 
 Supply PAGES as a keyword argument to fetch several pages. See
-`circleci-run-paginated-request' for more info."
+`circleci-api-run-paginated-request' for more info."
   (apply
-   #'circleci-run-paginated-request
+   #'circleci-api-run-paginated-request
    (circleci-api--route--pipeline-workflows pipeline-id)
    args))
 
 ;;;###autoload
-(cl-defun circleci-get-project-pipelines (project-slug &rest args &allow-other-keys)
+(cl-defun circleci-api-get-project-pipelines (project-slug &rest args &allow-other-keys)
   "Get the pipelines for the project with PROJECT-SLUG.
 
-ARGS is passed to `circleci-run-paginated-request'.
+ARGS is passed to `circleci-api-run-paginated-request'.
 
 Supply PAGES as a keyword argument to fetch several pages. See
-`circleci-run-paginated-request' for more info."
+`circleci-api-run-paginated-request' for more info."
   (apply
-   #'circleci-run-paginated-request
+   #'circleci-api-run-paginated-request
    (circleci-api--route--project-pipelines project-slug)
    args))
 
 ;;;###autoload
-(cl-defun circleci-get-my-project-pipelines (project-slug &rest args &allow-other-keys)
+(cl-defun circleci-api-get-my-project-pipelines (project-slug &rest args &allow-other-keys)
   "Get your pipelines for the project with PROJECT-SLUG.
 
-ARGS is passed to `circleci-run-paginated-request'.
+ARGS is passed to `circleci-api-run-paginated-request'.
 
 Supply PAGES as a keyword argument to fetch several pages. See
-`circleci-run-paginated-request' for more info."
+`circleci-api-run-paginated-request' for more info."
   (apply
-   #'circleci-run-paginated-request
+   #'circleci-api-run-paginated-request
    (circleci-api--route--my-project-pipelines project-slug)
    args))
 
 ;;;###autoload
-(cl-defun circleci-get-workflow (workflow-id &rest args &allow-other-keys)
+(cl-defun circleci-api-get-workflow (workflow-id &rest args &allow-other-keys)
   "Get the workflow with WORKFLOW-ID.
 
-ARGS is passed to `circleci-run-request'."
+ARGS is passed to `circleci-api-run-request'."
   (apply
-   #'circleci-run-request
+   #'circleci-api-run-request
    (circleci-api--route--workflow-by-id workflow-id)
    args))
 
 ;;;###autoload
-(cl-defun circleci-get-workflow-jobs (workflow-id &rest args &allow-other-keys)
+(cl-defun circleci-api-get-workflow-jobs (workflow-id &rest args &allow-other-keys)
   "Get the jobs for the workflow with WORKFLOW-ID.
 
-ARGS is passed to `circleci-run-paginated-request'.
+ARGS is passed to `circleci-api-run-paginated-request'.
 
 Supply PAGES as a keyword argument to fetch several pages. See
-`circleci-run-paginated-request' for more info."
+`circleci-api-run-paginated-request' for more info."
   (apply
-   #'circleci-run-paginated-request
+   #'circleci-api-run-paginated-request
    (circleci-api--route--workflow-jobs workflow-id)
    args))
 
 ;;;###autoload
-(cl-defun circleci-trigger-pipeline (project-slug &rest args
-                                                  &key
-                                                  (branch nil)
-                                                  (tag nil)
-                                                  (pipeline-parameters nil)
-                                                  &allow-other-keys)
+(cl-defun circleci-api-trigger-pipeline (project-slug &rest args
+                                                      &key
+                                                      (branch nil)
+                                                      (tag nil)
+                                                      (pipeline-parameters nil)
+                                                      &allow-other-keys)
   "Trigger a pipeine for the project with PROJECT-SLUG.
 
 Specifying either BRANCH or TAG (but not both) is required.
@@ -400,13 +400,13 @@ Specifying either BRANCH or TAG (but not both) is required.
 PIPELINE-PARMATERS are a native alist, which is passed in as pipeline
 parameters.
 
-ARGS is passed to `circleci-run-request'."
+ARGS is passed to `circleci-api-run-request'."
   (unless (or branch tag)
     (error "Need to specify either branch or tag"))
   (when (and branch tag)
     (error "Cannot specify branch and tag"))
   (apply
-   #'circleci-run-request
+   #'circleci-api-run-request
    (circleci-api--route--project-pipelines project-slug)
    :method "POST"
    :data (cl-concatenate
@@ -418,29 +418,29 @@ ARGS is passed to `circleci-run-request'."
    args))
 
 ;;;###autoload
-(cl-defun circleci-cancel-workflow (workflow-id &rest args &allow-other-keys)
+(cl-defun circleci-api-cancel-workflow (workflow-id &rest args &allow-other-keys)
   "Cancel the workflow with WORKFLOW-ID.
 
-ARGS is passed to `circleci-run-request'."
+ARGS is passed to `circleci-api-run-request'."
   (apply
-   #'circleci-run-request
+   #'circleci-api-run-request
    (circleci-api--route--workflow-cancel workflow-id)
    :method "POST"
    args))
 
 ;;;###autoload
-(cl-defun circleci-rerun-workflow (workflow-id &rest args
-                                               &key
-                                               (from-failed nil)
-                                               &allow-other-keys)
+(cl-defun circleci-api-rerun-workflow (workflow-id &rest args
+                                                   &key
+                                                   (from-failed nil)
+                                                   &allow-other-keys)
   "Rerun the workflow with WORKFLOW-ID.
 
 If FROM-FAILED is non-nil rerun from the failed job, otherwise rerun
 everything.
 
-ARGS is passed to `circleci-run-request'."
+ARGS is passed to `circleci-api-run-request'."
   (apply
-   #'circleci-run-request
+   #'circleci-api-run-request
    (circleci-api--route--workflow-rerun workflow-id)
    :method "POST"
    :data (when from-failed '((from-failed t)))
@@ -448,12 +448,12 @@ ARGS is passed to `circleci-run-request'."
    args))
 
 ;;;###autoload
-(cl-defun circleci-approve-job (workflow-id job-id &rest args &allow-other-keys)
+(cl-defun circleci-api-approve-job (workflow-id job-id &rest args &allow-other-keys)
   "Approve the job with JOB-ID in the workflow with WORKFLOW-ID.
 
-ARGS is passed to `circleci-run-request'."
+ARGS is passed to `circleci-api-run-request'."
   (apply
-   #'circleci-run-request
+   #'circleci-api-run-request
    (circleci-api--route--job-approve workflow-id job-id)
    :method "POST"
    :allow-other-keys t
