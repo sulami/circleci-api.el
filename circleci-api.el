@@ -34,20 +34,20 @@
 
 ;; Customisation:
 
-(defgroup circleci nil
+(defgroup circleci-api nil
   "Bindings for the CircleCI API."
   :group 'comm
-  :prefix "circleci-")
+  :prefix "circleci-api-")
 
 (defcustom circleci-api-token ""
   "The CircleCI API token."
   :type 'string
-  :group 'circleci)
+  :group 'circleci-api)
 
 (defcustom circleci-api-host "https://circleci.com"
   "The CircleCI API host."
   :type 'string
-  :group 'circleci)
+  :group 'circleci-api)
 
 ;; Routes:
 
