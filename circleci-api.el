@@ -285,6 +285,7 @@ ARGS is passed to `circleci-api-run-request'.
 
 Supply PAGES as a keyword argument to fetch several pages. See
 `circleci-api-run-paginated-request' for more info."
+  (interactive "sOrg Slug: ") ;; FIXME Get the mine parameter in.
   (apply
    #'circleci-api-run-paginated-request
    (circleci-api--route--pipeline)
@@ -299,6 +300,7 @@ Supply PAGES as a keyword argument to fetch several pages. See
   "Get the project with PROJECT-SLUG.
 
 ARGS is passed to `circleci-api-run-request'."
+  (interactive "Project Slug: ")
   (apply
    #'circleci-api-run-request
    (circleci-api--route--project project-slug)
@@ -309,6 +311,7 @@ ARGS is passed to `circleci-api-run-request'."
   "Get a pipeline by PIPELINE-ID.
 
 ARGS is passed to `circleci-api-run-request'."
+  (interactive "sPipeline ID: ")
   (apply
    #'circleci-api-run-request
    (circleci-api--route--pipeline-by-id pipeline-id)
@@ -319,6 +322,7 @@ ARGS is passed to `circleci-api-run-request'."
   "Get the config for the pipeline with PIPELINE-ID.
 
 ARGS is passed to `circleci-api-run-request'."
+  (interactive "sPipeline ID: ")
   (apply
    #'circleci-api-run-request
    (circleci-api--route--pipeline-config pipeline-id)
@@ -332,6 +336,7 @@ ARGS is passed to `circleci-api-run-paginated-request'.
 
 Supply PAGES as a keyword argument to fetch several pages. See
 `circleci-api-run-paginated-request' for more info."
+  (interactive "sPipeline ID: ")
   (apply
    #'circleci-api-run-paginated-request
    (circleci-api--route--pipeline-workflows pipeline-id)
@@ -345,6 +350,7 @@ ARGS is passed to `circleci-api-run-paginated-request'.
 
 Supply PAGES as a keyword argument to fetch several pages. See
 `circleci-api-run-paginated-request' for more info."
+  (interactive "sProject Slug: ")
   (apply
    #'circleci-api-run-paginated-request
    (circleci-api--route--project-pipelines project-slug)
@@ -358,6 +364,7 @@ ARGS is passed to `circleci-api-run-paginated-request'.
 
 Supply PAGES as a keyword argument to fetch several pages. See
 `circleci-api-run-paginated-request' for more info."
+  (interactive "sProject Slug: ")
   (apply
    #'circleci-api-run-paginated-request
    (circleci-api--route--my-project-pipelines project-slug)
@@ -368,6 +375,7 @@ Supply PAGES as a keyword argument to fetch several pages. See
   "Get the workflow with WORKFLOW-ID.
 
 ARGS is passed to `circleci-api-run-request'."
+  (interactive "sWorkflow ID: ")
   (apply
    #'circleci-api-run-request
    (circleci-api--route--workflow-by-id workflow-id)
@@ -381,6 +389,7 @@ ARGS is passed to `circleci-api-run-paginated-request'.
 
 Supply PAGES as a keyword argument to fetch several pages. See
 `circleci-api-run-paginated-request' for more info."
+  (interactive "sWorkflow ID: ")
   (apply
    #'circleci-api-run-paginated-request
    (circleci-api--route--workflow-jobs workflow-id)
@@ -401,6 +410,7 @@ PIPELINE-PARMATERS are a native alist, which is passed in as pipeline
 parameters.
 
 ARGS is passed to `circleci-api-run-request'."
+  (interactive "sProject Slug: ") ;; TODO Add the other parameters.
   (unless (or branch tag)
     (error "Need to specify either branch or tag"))
   (when (and branch tag)
@@ -422,6 +432,7 @@ ARGS is passed to `circleci-api-run-request'."
   "Cancel the workflow with WORKFLOW-ID.
 
 ARGS is passed to `circleci-api-run-request'."
+  (interactive "sWorkflow ID: ")
   (apply
    #'circleci-api-run-request
    (circleci-api--route--workflow-cancel workflow-id)
@@ -439,6 +450,7 @@ If FROM-FAILED is non-nil rerun from the failed job, otherwise rerun
 everything.
 
 ARGS is passed to `circleci-api-run-request'."
+  (interactive "sWorkflow ID: ") ;; TODO Get from-failed in.
   (apply
    #'circleci-api-run-request
    (circleci-api--route--workflow-rerun workflow-id)
@@ -452,6 +464,7 @@ ARGS is passed to `circleci-api-run-request'."
   "Approve the job with JOB-ID in the workflow with WORKFLOW-ID.
 
 ARGS is passed to `circleci-api-run-request'."
+  (interactive "sWorkflow ID: \nsJob ID: ")
   (apply
    #'circleci-api-run-request
    (circleci-api--route--job-approve workflow-id job-id)
