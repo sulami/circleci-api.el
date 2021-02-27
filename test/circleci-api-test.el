@@ -35,7 +35,7 @@
 
 (ert-deftest circleci-api-test/test-project-slug ()
   (should (equal "gh/sulami/circleci-api"
-                 (circleci-project-slug "gh" "sulami" "circleci-api"))))
+                 (circleci-api-project-slug "gh" "sulami" "circleci-api"))))
 
 (cl-defmacro circleci-api-test/with-test-host (&body body)
   "Run BODY against the local test API.
@@ -85,8 +85,8 @@ with the appropriate bindings, and kill the server."
 
 (ert-deftest circleci-api-test/test-pipeline-list ()
   (circleci-api-test/with-test-host
-   (circleci-get-pipelines
-    (circleci-org-slug "gh" "sulami")
+   (circleci-api-get-pipelines
+    (circleci-api-org-slug "gh" "sulami")
     :sync t
     :handler (cl-function
               (lambda (&key error-thrown data circleci-responses &allow-other-keys)
@@ -100,8 +100,8 @@ with the appropriate bindings, and kill the server."
 
 (ert-deftest circleci-api-test/test-paginated-pipeline-list ()
   (circleci-api-test/with-test-host
-   (circleci-get-pipelines
-    (circleci-org-slug "gh" "sulami")
+   (circleci-api-get-pipelines
+    (circleci-api-org-slug "gh" "sulami")
     :sync t
     :pages 2
     :handler (cl-function
@@ -116,8 +116,8 @@ with the appropriate bindings, and kill the server."
 
 (ert-deftest circleci-api-test/test-paginated-pipeline-list-running-out ()
   (circleci-api-test/with-test-host
-   (circleci-get-pipelines
-    (circleci-org-slug "gh" "sulami")
+   (circleci-api-get-pipelines
+    (circleci-api-org-slug "gh" "sulami")
     :sync t
     :pages 3
     :handler (cl-function
@@ -132,8 +132,8 @@ with the appropriate bindings, and kill the server."
 
 (ert-deftest circleci-api-test/test-my-pipelines ()
   (circleci-api-test/with-test-host
-   (circleci-get-pipelines
-    (circleci-org-slug "gh" "sulami")
+   (circleci-api-get-pipelines
+    (circleci-api-org-slug "gh" "sulami")
     :sync t
     :mine t
     :handler (cl-function
@@ -148,8 +148,8 @@ with the appropriate bindings, and kill the server."
 
 (ert-deftest circleci-api-test/test-project ()
   (circleci-api-test/with-test-host
-   (circleci-get-project
-    (circleci-project-slug "gh" "sulami" "circleci-api")
+   (circleci-api-get-project
+    (circleci-api-project-slug "gh" "sulami" "circleci-api")
     :sync t
     :handler (cl-function
               (lambda (&key data &allow-other-keys)
@@ -158,7 +158,7 @@ with the appropriate bindings, and kill the server."
 
 (ert-deftest circleci-api-test/test-pipeline-by-id ()
   (circleci-api-test/with-test-host
-   (circleci-get-pipeline
+   (circleci-api-get-pipeline
     "123"
     :sync t
     :handler (cl-function
@@ -168,7 +168,7 @@ with the appropriate bindings, and kill the server."
 
 (ert-deftest circleci-api-test/test-pipeline-config ()
   (circleci-api-test/with-test-host
-   (circleci-get-pipeline-config
+   (circleci-api-get-pipeline-config
     "123"
     :sync t
     :handler (cl-function
@@ -180,7 +180,7 @@ with the appropriate bindings, and kill the server."
 
 (ert-deftest circleci-api-test/test-pipeline-workflows ()
   (circleci-api-test/with-test-host
-   (circleci-get-pipeline-workflows
+   (circleci-api-get-pipeline-workflows
     "123"
     :sync t
     :handler (cl-function
@@ -193,8 +193,8 @@ with the appropriate bindings, and kill the server."
 
 (ert-deftest circleci-api-test/test-project-pipelines ()
   (circleci-api-test/with-test-host
-   (circleci-get-project-pipelines
-    (circleci-project-slug "gh" "sulami" "circleci-api")
+   (circleci-api-get-project-pipelines
+    (circleci-api-project-slug "gh" "sulami" "circleci-api")
     :sync t
     :handler (cl-function
               (lambda (&key data &allow-other-keys)
@@ -206,8 +206,8 @@ with the appropriate bindings, and kill the server."
 
 (ert-deftest circleci-api-test/test-my-project-pipelines ()
   (circleci-api-test/with-test-host
-   (circleci-get-my-project-pipelines
-    (circleci-project-slug "gh" "sulami" "circleci-api")
+   (circleci-api-get-my-project-pipelines
+    (circleci-api-project-slug "gh" "sulami" "circleci-api")
     :sync t
     :handler (cl-function
               (lambda (&key data &allow-other-keys)
@@ -219,7 +219,7 @@ with the appropriate bindings, and kill the server."
 
 (ert-deftest circleci-api-test/test-workflow-by-id ()
   (circleci-api-test/with-test-host
-   (circleci-get-workflow
+   (circleci-api-get-workflow
     "wonf"
     :sync t
     :handler (cl-function
@@ -229,7 +229,7 @@ with the appropriate bindings, and kill the server."
 
 (ert-deftest circleci-api-test/test-workflow-jobs ()
   (circleci-api-test/with-test-host
-   (circleci-get-workflow-jobs
+   (circleci-api-get-workflow-jobs
     "wonf"
     :sync t
     :handler (cl-function
@@ -242,8 +242,8 @@ with the appropriate bindings, and kill the server."
 
 (ert-deftest circleci-api-test/test-trigger-pipeline-branch ()
   (circleci-api-test/with-test-host
-   (circleci-trigger-pipeline
-    (circleci-project-slug "gh" "sulami" "circleci-api")
+   (circleci-api-trigger-pipeline
+    (circleci-api-project-slug "gh" "sulami" "circleci-api")
     :branch "master"
     :pipeline-parameters '((foo . bar))
     :sync t
@@ -258,8 +258,8 @@ with the appropriate bindings, and kill the server."
 
 (ert-deftest circleci-api-test/test-trigger-pipeline-tag ()
   (circleci-api-test/with-test-host
-   (circleci-trigger-pipeline
-    (circleci-project-slug "gh" "sulami" "circleci-api")
+   (circleci-api-trigger-pipeline
+    (circleci-api-project-slug "gh" "sulami" "circleci-api")
     :tag "v1.2"
     :sync t
     :handler (cl-function
@@ -269,8 +269,8 @@ with the appropriate bindings, and kill the server."
 
 (ert-deftest circleci-api-test/test-trigger-pipeline-both ()
   (should-error
-   (circleci-trigger-pipeline
-    (circleci-project-slug "gh" "sulami" "circleci-api")
+   (circleci-api-trigger-pipeline
+    (circleci-api-project-slug "gh" "sulami" "circleci-api")
     :branch "master"
     :tag "v1.2"
     :pipeline-parameters '((foo . bar))
@@ -286,7 +286,7 @@ with the appropriate bindings, and kill the server."
 
 (ert-deftest circleci-api-test/test-cancel-workflow ()
   (circleci-api-test/with-test-host
-   (circleci-cancel-workflow
+   (circleci-api-cancel-workflow
     "workflow-id"
     :sync t
     :handler (cl-function
@@ -296,7 +296,7 @@ with the appropriate bindings, and kill the server."
 
 (ert-deftest circleci-api-test/test-rerun-workflow ()
   (circleci-api-test/with-test-host
-   (circleci-rerun-workflow
+   (circleci-api-rerun-workflow
     "workflow-id"
     :sync t
     :handler (cl-function
@@ -308,7 +308,7 @@ with the appropriate bindings, and kill the server."
 
 (ert-deftest circleci-api-test/test-rerun-workflow-from-failed ()
   (circleci-api-test/with-test-host
-   (circleci-rerun-workflow
+   (circleci-api-rerun-workflow
     "workflow-id"
     :from-failed t
     :sync t
@@ -320,7 +320,7 @@ with the appropriate bindings, and kill the server."
 
 (ert-deftest circleci-api-test/test-approve-job ()
   (circleci-api-test/with-test-host
-   (circleci-approve-job
+   (circleci-api-approve-job
     "workflow-id"
     "job-id"
     :sync t
