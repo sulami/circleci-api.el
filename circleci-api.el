@@ -396,6 +396,11 @@ Supply PAGES as a keyword argument to fetch several pages. See
    (circleci-api--route--workflow-jobs workflow-id)
    args))
 
+(defun some-string (s)
+  "Return S if S is not blank, else `nil'."
+  (unless (string-blank-p s)
+    s))
+
 ;;;###autoload
 (cl-defun circleci-api-trigger-pipeline (project-slug &rest args
                                                       &key
@@ -411,7 +416,18 @@ PIPELINE-PARMATERS are a native alist, which is passed in as pipeline
 parameters.
 
 ARGS is passed to `circleci-api-run-request'."
-  (interactive "sProject Slug: ") ;; TODO Add the other parameters.
+  (interactive
+   (list (read-string "Project Slug: ")
+         (read-string "Branch: ")
+         (read-string "Tag: ")
+         (read-minibuffer "Pipeline Parameters: " nil)))
+  (let* ((interactive? (called-interactively-p 'any))
+         (branch (if interactive? (some-string (first args)) branch))
+         (tag (if interactive? (some-string (second args)) tag))
+         (pipeline-parameters (if interactive?
+                                  (third args)
+                                pipeline-parameters))
+         (args (if interactive? (nthcdr 3 args) args))))
   (unless (or branch tag)
     (error "Need to specify either branch or tag"))
   (when (and branch tag)
@@ -451,14 +467,19 @@ If FROM-FAILED is non-nil rerun from the failed job, otherwise rerun
 everything.
 
 ARGS is passed to `circleci-api-run-request'."
-  (interactive "sWorkflow ID: ") ;; TODO Get from-failed in.
-  (apply
-   #'circleci-api-run-request
-   (circleci-api--route--workflow-rerun workflow-id)
-   :method "POST"
-   :data (when from-failed '((from-failed t)))
-   :allow-other-keys t
-   args))
+  (interactive
+   (list (read-string "Workflow ID: ")
+         (yes-or-no-p "From failed? ")))
+  (let* ((interactive? (called-interactively-p 'any))
+         (from-failed (if interactive? (first args) from-failed))
+         (args (if interactive? (rest args) args)))
+    (apply
+     #'circleci-api-run-request
+     (circleci-api--route--workflow-rerun workflow-id)
+     :method "POST"
+     :data (when from-failed '((from-failed t)))
+     :allow-other-keys t
+     args)))
 
 ;;;###autoload
 (cl-defun circleci-api-approve-job (workflow-id job-id &rest args &allow-other-keys)
