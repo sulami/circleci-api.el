@@ -1,7 +1,7 @@
 #+TITLE: CircleCI API
 
 [[https://melpa.org/#/circleci-api][file:https://melpa.org/packages/circleci-api-badge.svg]]
-[[https://app.circleci.com/pipelines/github/sulami/circleci-api][file:https://circleci.com/gh/sulami/circleci-api.svg?style=svg]]
+[[https://app.circleci.com/pipelines/github/sulami/circleci-api.el][file:https://circleci.com/gh/sulami/circleci-api.el.svg?style=svg]]
 
 Bindings for the CircleCI API.
 
