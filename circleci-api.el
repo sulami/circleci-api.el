@@ -133,7 +133,8 @@ CIRCLECI-RESPONSES is filled with a list of responses if the request
 was paginated."
   (message "CircleCI request done: %s" symbol-status)
   (when circleci-responses
-    (message "Ran %s requests" (length circleci-responses))))
+    (message "Ran %s requests" (length circleci-responses))
+    (message "Response: %s" circleci-responses)))
 
 (cl-defun circleci-api-run-request (route &key
                                           (method "GET")
